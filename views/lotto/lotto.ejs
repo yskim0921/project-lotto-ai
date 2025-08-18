@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>로또번호 분석 페이지</title>
+    <style>
+        /* 기존 스타일 유지 */
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: inline-block;
+            width: 120px;
+            font-weight: bold;
+            color: #555;
+        }
+        input {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            width: 200px;
+            font-size: 14px;
+        }
+        input:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 20px 0;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result-section {
+            margin-top: 30px;
+        }
+        .result-box {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .error {
+            background-color: #ffebee;
+            color: #c62828;
+            border-color: #c62828;
+        }
+        .fortune-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: #e8f5e8;
+            border-radius: 5px;
+        }
+        .emotion-item {
+            display: inline-block;
+            margin: 5px;
+            padding: 5px 10px;
+            background: #e3f2fd;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+        .numbers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .number-set {
+            background: #fff3e0;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ffcc02;
+        }
+        .number-ball {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            margin: 2px;
+            border-radius: 50%;
+            background: #ffcc02;
+            color: #333;
+            font-weight: bold;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            color: #666;
+            margin: 20px 0;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-link">← 이전으로 돌아가기</a>
+        <h1>🎰 로또번호 분석 페이지</h1>
+        
+        <div class="input-group">
+            <label for="gender">성별:</label>
+            <input type="text" id="gender" placeholder="남성/여성" value="남성" />
+        </div>
+
+        <div class="input-group">
+            <label for="calendar">달력:</label>
+            <input type="text" id="calendar" placeholder="양력/음력(평)/음력(윤)" value="양력" />
+        </div>
+
+        <div class="input-group">
+            <label for="year">출생년도:</label>
+            <input type="number" id="year" placeholder="예: 1990" value="1990" />
+        </div>
+
+        <div class="input-group">
+            <label for="month">출생월:</label>
+            <input type="number" id="month" placeholder="예: 3" value="3" />
+        </div>
+
+        <div class="input-group">
+            <label for="day">출생일:</label>
+            <input type="number" id="day" placeholder="예: 15" value="15" />
+        </div>
+
+        <div class="input-group">
+            <label for="dream">오늘의 꿈:</label>
+            <input type="text" id="dream" placeholder="꿈 내용을 상세히 입력해주세요" value="돼지가 우리집으로 날아들어왔어요" style="width: 400px;" />
+        </div>
+
+        <button onclick="sendData()">🔮 운세 & 로또번호 분석하기</button>
+        
+        <div class="loading" id="loading">
+            <p>🔄 분석 중입니다... 잠시만 기다려주세요.</p>
+        </div>
+    </div>
+
+    <div class="result-section" id="resultSection" style="display: none;">
+        <div class="container">
+            <h2>👤 사용자 정보</h2>
+            <div class="result-box" id="userInfo"></div>
+        </div>
+
+        <div class="container">
+            <h2>🔮 오늘의 운세</h2>
+            <div class="result-box" id="fortune"></div>
+        </div>
+
+        <div class="container">
+            <h2>💭 꿈 해몽</h2>
+            <div class="result-box" id="dreamInterpretation"></div>
+        </div>
+
+        <div class="container">
+            <h2>🎭 감정 분석</h2>
+            <div class="result-box">
+                <h3>운세 기반 감정 (상위 6개)</h3>
+                <div id="fortuneEmotions"></div>
+                <h3>꿈 기반 감정 (상위 6개)</h3>
+                <div id="dreamEmotions"></div>
+            </div>
+        </div>
+
+        <div class="container">
+            <h2>🎲 추천 로또번호</h2>
+            <div class="result-box">
+                <div id="recommendedNumbers"></div>
+            </div>
+        </div>
+
+        <div class="container" id="errorsSection" style="display: none;">
+            <h2>⚠️ 처리 중 발생한 알림</h2>
+            <div class="result-box error" id="errors"></div>
+        </div>
+    </div>
+
+    <script>
+        function sendData() {
+            const gender = document.getElementById("gender").value.trim() || "남성";
+            const calendar = document.getElementById("calendar").value.trim() || "양력";
+            const year = Number(document.getElementById("year").value) || 1990;
+            const month = Number(document.getElementById("month").value) || 3;
+            const day = Number(document.getElementById("day").value) || 15;
+            const dream = document.getElementById("dream").value.trim() || "돼지가 우리집으로 날아들어왔어요";
+
+            document.getElementById("loading").style.display = "block";
+            document.getElementById("resultSection").style.display = "none";
+            document.getElementById("errorsSection").style.display = "none";
+            document.getElementById("errors").innerHTML = "";
+
+            fetch("/lotto/calc", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ gender, calendar, year, month, day, dream })
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("loading").style.display = "none";
+
+                if(data.error) {
+                    displayError("서버 오류: " + data.error);
+                    return;
+                }
+                displayResults(data);
+            })
+            .catch(err => {
+                document.getElementById("loading").style.display = "none";
+                console.error("에러:", err);
+                displayError("네트워크 오류가 발생했습니다.");
+            });
+        }
+
+        function displayError(errorMessage) {
+            document.getElementById("resultSection").style.display = "block";
+            document.getElementById("errorsSection").style.display = "block";
+            document.getElementById("errors").innerHTML = `<p>${errorMessage}</p>`;
+        }
+
+        function displayResults(data) {
+            document.getElementById("resultSection").style.display = "block";
+
+            // 사용자 정보
+            if (data.user_info) {
+                const userInfo = data.user_info;
+                document.getElementById("userInfo").innerHTML = `
+                    <p><strong>성별:</strong> ${userInfo.gender}</p>
+                    <p><strong>달력:</strong> ${userInfo.calendar}</p>
+                    <p><strong>생년월일:</strong> ${userInfo.year}년 ${userInfo.month}월 ${userInfo.day}일</p>
+                    <p><strong>입력한 꿈:</strong> ${data.dream_input}</p>
+                `;
+            } else {
+                document.getElementById("userInfo").innerHTML = "<p>사용자 정보가 없습니다.</p>";
+            }
+
+            // 운세
+            if (data.fortune && Object.keys(data.fortune).length) {
+                let fortuneHtml = "";
+                for (const [key, value] of Object.entries(data.fortune)) {
+                    fortuneHtml += `<div class="fortune-item"><strong>${key}:</strong> ${value}</div>`;
+                }
+                document.getElementById("fortune").innerHTML = fortuneHtml;
+            } else {
+                document.getElementById("fortune").innerHTML = "<p>운세 정보를 가져오지 못했습니다.</p>";
+            }
+
+            // 꿈 해몽
+            if (data.dream_interpretation) {
+                document.getElementById("dreamInterpretation").innerHTML = `<p>${data.dream_interpretation}</p>`;
+            } else {
+                document.getElementById("dreamInterpretation").innerHTML = "<p>꿈 해몽 정보를 가져오지 못했습니다.</p>";
+            }
+
+            // 감정 분석
+            if (data.emotion_analysis) {
+                // 운세 기반 감정
+                if (data.emotion_analysis.fortune_emotions && data.emotion_analysis.fortune_emotions.length) {
+                    let fortuneEmotionsHtml = "";
+                    data.emotion_analysis.fortune_emotions.forEach(emotion => {
+                        fortuneEmotionsHtml += `<span class="emotion-item">${emotion.emotion} (${(emotion.probability * 100).toFixed(1)}%)</span>`;
+                    });
+                    document.getElementById("fortuneEmotions").innerHTML = fortuneEmotionsHtml;
+                } else {
+                    document.getElementById("fortuneEmotions").innerHTML = "<p>운세 감정 분석 결과가 없습니다.</p>";
+                }
+
+                // 꿈 기반 감정
+                if (data.emotion_analysis.dream_emotions && data.emotion_analysis.dream_emotions.length) {
+                    let dreamEmotionsHtml = "";
+                    data.emotion_analysis.dream_emotions.forEach(emotion => {
+                        dreamEmotionsHtml += `<span class="emotion-item">${emotion.emotion} (${(emotion.probability * 100).toFixed(1)}%)</span>`;
+                    });
+                    document.getElementById("dreamEmotions").innerHTML = dreamEmotionsHtml;
+                } else {
+                    document.getElementById("dreamEmotions").innerHTML = "<p>꿈 감정 분석 결과가 없습니다.</p>";
+                }
+            } else {
+                document.getElementById("fortuneEmotions").innerHTML = "<p>감정 분석 정보가 없습니다.</p>";
+                document.getElementById("dreamEmotions").innerHTML = "";
+            }
+
+            // 추천 번호
+            if (data.recommended_numbers && data.recommended_numbers.length) {
+                let numbersHtml = "";
+                data.recommended_numbers.forEach((numbers, index) => {
+                    let numberBalls = "";
+                    numbers.forEach(num => {
+                        numberBalls += `<span class="number-ball">${num}</span>`;
+                    });
+                    numbersHtml += `<div class="number-set"><strong>게임 ${index + 1}:</strong><br>${numberBalls}</div>`;
+                });
+                document.getElementById("recommendedNumbers").innerHTML = `<div class="numbers-grid">${numbersHtml}</div>`;
+
+                if (data.excel_saved) {
+                    document.getElementById("recommendedNumbers").innerHTML += `<p style="color: green; margin-top: 15px;">✅ 결과가 엑셀 파일로 저장되었습니다.</p>`;
+                }
+            } else {
+                document.getElementById("recommendedNumbers").innerHTML = "<p>추천 번호를 생성하지 못했습니다.</p>";
+            }
+
+            // 에러 메시지
+            if (data.errors && data.errors.length) {
+                document.getElementById("errorsSection").style.display = "block";
+                let errorsHtml = "";
+                data.errors.forEach(error => {
+                    errorsHtml += `<p>• ${error}</p>`;
+                });
+                document.getElementById("errors").innerHTML = errorsHtml;
+            } else {
+                document.getElementById("errorsSection").style.display = "none";
+                document.getElementById("errors").innerHTML = "";
+            }
+        }
+    </script>
+</body>
+</html>
