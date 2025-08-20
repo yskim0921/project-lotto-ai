@@ -38,10 +38,14 @@ const lottoRouter = require('./routes/lotto');
 const temp1Router = require('./routes/temp1');
 const temp3Router = require('./routes/temp3');
 const temp4Router = require('./routes/temp4');
+const signin_upRouter = require('./routes/signin_up');
+
 app.use('/product', productRouter);
 app.use('/lotto', lottoRouter);
 app.use('/temp1', temp1Router);
 app.use('/temp2', temp2Router);
 app.use('/temp3', temp3Router);
 app.use('/temp4', temp4Router);
+app.use('/signin_up', signin_upRouter);
+
 module.exports = app;
