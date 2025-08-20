@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>이용방법 (About)</title>
+        <!-- W3.CSS 적용 -->
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+    <link rel="stylesheet" href="public\css\style.css">
     <style>
         body {
             font-family: 'BM Jua', sans-serif; /* 귀여운 폰트 적용 */
@@ -68,7 +71,8 @@
     </style>
 </head>
 <body>
-
+    <!-- 상단 include -->
+    <div id="header"></div>
 <div class="container">
     <h1>로또 번호, 이제는 내 꿈과 운세로! ✨</h1>
     
@@ -102,5 +106,23 @@
 
 </div>
 
+ <!-- 하단 include -->
+    <div id="footer"></div>
+
+    <!-- JS: header/footer include -->
+    <script>
+        function includeHTML(id, url) {
+            fetch(url)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById(id).innerHTML = data;
+                })
+                .catch(err => console.error(`Include error: ${err}`));
+        }
+
+        // 실행
+        includeHTML("header", "header.html");
+        includeHTML("footer", "footer.html");
+    </script>
 </body>
 </html>

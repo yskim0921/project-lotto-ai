@@ -1,41 +1,54 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8" />
   <title>상품 상세 페이지</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- W3.CSS 적용 -->
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+  <link rel="stylesheet" href="public\css\style.css">
 </head>
-<body>
-  <div class="container w-75 mt-5 mx-auto">
-    <div class="d-flex justify-content-between align-items-center">
-      <h2 class="m-0">후기상세 내용</h2>
-      <div>
-        <a class="btn btn-outline-secondary" href="/product">목록 보기</a>
-      </div>
-    </div>
-    <hr />
-    <div class="card w-75 mx-auto p-3">
-      <% if (filename) { %>
-        <img class="card-img-top"
-             src="/upload/<%= filename %>"
-             alt="상품 이미지"
-             style="width:300px; height:200px; object-fit:cover;" />
-      <% } else { %>
-        <div class="text-muted">업로드된 이미지가 없습니다.</div>
-      <% } %>
 
-      <div class="card-body">
-        <p class="card-text">제목: <%= name %></p>
-        <p class="card-text">당첨금: ₩ <%= price.toLocaleString() %></p>
-        <p class="card-text">후기내용: <%= content %></p>
+<body>
+  <!-- 상단 include -->
+  <%- include('../ins/top') %>
+
+    <div class="container w-75 mt-5 mx-auto">
+      <div class="d-flex justify-content-between align-items-center">
+        <h2 class="m-0">후기상세 내용</h2>
+        <div>
+          <a class="btn btn-outline-secondary" href="/product">목록 보기</a>
+        </div>
+      </div>
+      <hr />
+      <div class="card w-75 mx-auto p-3">
+        <% if (filename) { %>
+          <img class="card-img-top" src="/upload/<%= filename %>" alt="상품 이미지"
+            style="width:300px; height:200px; object-fit:cover;" />
+          <% } else { %>
+            <div class="text-muted">업로드된 이미지가 없습니다.</div>
+            <% } %>
+
+              <div class="card-body">
+                <p class="card-text">제목: <%= name %>
+                </p>
+                <p class="card-text">당첨금: ₩ <%= price.toLocaleString() %>
+                </p>
+                <p class="card-text">후기내용: <%= content %>
+                </p>
+              </div>
+      </div>
+      <hr />
+      <div class="d-flex gap-2">
+        <a class="btn btn-outline-secondary" href="/product">&laquo; 목록</a>
+        <a class="btn btn-outline-secondary" href="javascript:history.back()">이전</a>
       </div>
     </div>
-    <hr />
-    <div class="d-flex gap-2">
-      <a class="btn btn-outline-secondary" href="/product">&laquo; 목록</a>
-      <a class="btn btn-outline-secondary" href="javascript:history.back()">이전</a>
-    </div>
-  </div>
+
+    <!-- bottom include -->
+    <%- include('../ins/bottom') %>
 </body>
+
 </html>
