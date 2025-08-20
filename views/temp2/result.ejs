@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>조회 결과</title>
+    <style>
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin: 20px auto;
+            font-family: Arial, sans-serif;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #F4F4F4;
+        }
+        .ball {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            border-radius: 50%;
+            color: white;
+            font-weight: bold;
+            margin: 0 2px;
+        }
+        .yellow { background: #FBC400; }
+        .blue { background: #69C8F2; }
+        .red { background: #FF7272; }
+        .black { background: #aaa; }
+        .green { background: #B0D840; }
+    </style>
+</head>
+<body>
+    <h2 style="text-align:center;">조회 결과</h2>
+    <table>
+        <tr>
+            <th>회차</th>
+            <th>당첨번호</th>
+            <th>내 번호</th>
+            <th>맞춘 개수</th>
+        </tr>
+        <% compared.forEach(r => { %>
+            <tr>
+                <td><%= r.drwNo %>회</td>
+                <td>
+                    <% r.numbers.forEach(num => { %>
+                        <span class="ball <%=
+                            num <= 10 ? 'yellow' :
+                            num <= 20 ? 'blue' :
+                            num <= 30 ? 'red' :
+                            num <= 40 ? 'black' :
+                            'green' %>"><%= num %></span>
+                    <% }) %>
+                    + <span class="ball <%=
+                        r.bonus <= 10 ? 'yellow' :
+                        r.bonus <= 20 ? 'blue' :
+                        r.bonus <= 30 ? 'red' :
+                        r.bonus <= 40 ? 'black' :
+                        'green' %>"><%= r.bonus %></span>
+                </td>
+                <td>
+                    <% r.myNums.forEach(num => { %>
+                        <span class="ball <%=
+                            num <= 10 ? 'yellow' :
+                            num <= 20 ? 'blue' :
+                            num <= 30 ? 'red' :
+                            num <= 40 ? 'black' :
+                            'green' %>"><%= num %></span>
+                    <% }) %>
+                </td>
+                <td><%= r.matchCount %>개</td>
+            </tr>
+        <% }) %>
+    </table>
+</body>
+</html>

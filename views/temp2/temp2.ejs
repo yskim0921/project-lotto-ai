@@ -1,22 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-        <!-- W3.CSS 적용 -->
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
-    <link rel="stylesheet" href="public\css\style.css">
+    <title>최근 10주 로또 번호</title>
+    <style>
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin: 20px auto;
+            font-family: Arial, sans-serif;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #F4F4F4;
+        }
+        .ball {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            border-radius: 50%;
+            color: white;
+            font-weight: bold;
+            margin: 0 2px;
+        }
+        .yellow { background: #FBC400; }
+        .blue { background: #69C8F2; }
+        .red { background: #FF7272; }
+        .black { background: #aaa; }
+        .green { background: #B0D840; }
+    </style>
 </head>
 <body>
-  <!-- 상단 include -->
-  <%- include('../ins/top') %>
-    <h1>지난주 당첨번호 페이지</h1>
-    <h1>
-    
-    </h1>
-
-    <!-- bottom include -->
-    <%- include('../ins/bottom') %>
+<div style="text-align: center; margin-bottom: 10px;">
+    <h2 style="margin-bottom: 8px;">최근 10주 로또 번호</h2>
+    <form method="get" action="/temp2" style="display: inline-flex; gap: 5px;">
+        <input type="number" name="drwNo" placeholder="회차 입력 (선택)" value="<%= inputDrwNo %>" style="padding: 4px 6px;">
+        <button type="submit" style="padding: 4px 8px;">조회</button>
+    </form>
+</div>
+    <table>
+        <tr>
+            <th>회차</th>
+            <th>번호</th>
+            <th>보너스</th>
+        </tr>
+        <% lottoResults.forEach(function(result){ %>
+            <tr>
+                <td><%= result.drwNo %>회</td>
+                <td>
+                    <% result.numbers.forEach(function(num){ %>
+                        <span class="ball <%=
+                            num <= 10 ? 'yellow' :
+                            num <= 20 ? 'blue' :
+                            num <= 30 ? 'red' :
+                            num <= 40 ? 'black' :
+                            'green' %>"><%= num %></span>
+                    <% }) %>
+                </td>
+                <td>
+                    <span class="ball <%=
+                        result.bonus <= 10 ? 'yellow' :
+                        result.bonus <= 20 ? 'blue' :
+                        result.bonus <= 30 ? 'red' :
+                        result.bonus <= 40 ? 'black' :
+                        'green' %>"><%= result.bonus %></span>
+                </td>
+            </tr>
+        <% }) %>
+    </table>
+    <!-- 입력창 + 조회 버튼 -->
+    <div style="text-align:center; margin-top:20px;">
+        <h3>내 번호 입력</h3>
+        <form action="temp2/result" method="POST">
+            <input type="number" name="drwNo" placeholder="회차 입력" style="width:80px;">
+            <input type="number" name="num1" min="1" max="45" style="width:50px;" required>
+            <input type="number" name="num2" min="1" max="45" style="width:50px;" required>
+            <input type="number" name="num3" min="1" max="45" style="width:50px;" required>
+            <input type="number" name="num4" min="1" max="45" style="width:50px;" required>
+            <input type="number" name="num5" min="1" max="45" style="width:50px;" required>
+            <input type="number" name="num6" min="1" max="45" style="width:50px;" required>
+            <button type="submit">조회</button>
+        </form>
+    </div>
 </body>
 </html>
