@@ -2,68 +2,146 @@
 <html lang="ko">
 
 <head>
-  <meta charset="UTF-8" />
-  <title>상품 목록</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- W3.CSS 적용 -->
-  <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
-  <link rel="stylesheet" href="public\css\style.css">
+    <meta charset="UTF-8" />
+    <title>후기 목록</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .card-img-top {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            aspect-ratio: 1/1;
+            border-top-left-radius: 0.375rem;
+            border-top-right-radius: 0.375rem;
+        }
+        .card {
+            border-radius: 0.375rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            overflow: hidden; 
+        }
+        .btn {
+            border-radius: 0.375rem;
+        }
+        /* 페이지네이션 중앙 정렬 */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 3rem;
+            margin-bottom: 3rem;
+        }
+    </style>
 </head>
 
 <body>
-  <!-- 상단 include -->
-  <%- include('../ins/top') %>
+    <%- include('../ins/top') %>
 
     <div class="container w-75 mt-5 mx-auto">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="m-0">후기 목록</h2>
-        <div>
-          <!-- 상품 등록 버튼 -->
-          <a class="btn btn-outline-secondary me-2" href="/product/upload">후기 등록</a>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="m-0">후기 목록</h2>
+            <div>
+                <a class="btn btn-outline-secondary me-2" href="/product/upload">후기 등록</a>
+            </div>
         </div>
-      </div>
 
-      <% if (!products || products.length===0) { %>
-        <div class="alert alert-info">등록된 후기내용이 없습니다. 먼저 등록해보세요.</div>
+        <% if (!products || products.length===0) { %>
+        <div class="alert alert-info rounded-md">등록된 후기내용이 없습니다. 먼저 등록해보세요.</div>
         <% } else { %>
-          <div class="row row-cols-1 row-cols-md-2 g-4">
+        <div class="row row-cols-1 row-cols-md-2 g-4">
             <% products.forEach(p=> { %>
-              <div class="col">
+            <div class="col">
                 <div class="card h-100">
-                  <% if (p.filename) { %>
+                    <% if (p.filename) { %>
                     <a href="/product/<%= p._id %>">
-                      <img src="/upload/<%= p.filename %>" class="card-img-top" alt="상품 이미지"
-                        style="height:200px; object-fit:cover;">
+                        <img src="/upload/<%= p.filename %>" class="card-img-top" alt="후기 이미지" loading="lazy">
                     </a>
                     <% } %>
-                      <div class="card-body">
+                    <div class="card-body">
                         <h5 class="card-title"><b>
-                            <%= p.name %>
-                          </b></h5>
-                        <p class="card-text text-muted mb-1">₩ <%= p.price.toLocaleString() %>
+                                <%= p.name %>
+                            </b></h5>
+                        <p class="card-text text-muted mb-1">
+                            <% if (p.price) { %>
+                                ₩ <%= p.price.toLocaleString() %>
+                            <% } %>
                         </p>
                         <p class="card-text">
-                          <%= p.content %>
+                            <%= p.content %>
                         </p>
-                      </div>
-                      <div class="card-footer d-flex justify-content-between align-items-center">
+                    </div>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
                         <small class="text-muted">
-                          <%= new Date(p.createdAt).toLocaleString() %>
+                            <%= new Date(p.createdAt).toLocaleString() %>
                         </small>
-                        <!-- 상세보기 링크 -->
-                        <a class="btn btn-sm btn-primary" href="/product/<%= p._id %>">상세보기</a>
-                      </div>
+                        <div>
+                            <a class="btn btn-sm btn-primary me-2" href="/product/<%= p._id %>">상세보기</a>
+                            <button class="btn btn-sm btn-danger" onclick="deleteReview('<%= p._id %>')">삭제</button>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <% }) %>
-          </div>
-          <% } %>
+            </div>
+            <% }) %>
+        </div>
+        <% } %>
+
+        <!-- 📌 페이지네이션 UI 시작 -->
+        <div class="pagination-container">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <!-- 이전 페이지 버튼 -->
+                    <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                        <a class="page-link" href="/product?page=<%= currentPage - 1 %>" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    
+                    <!-- 페이지 번호 링크 -->
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                            <a class="page-link" href="/product?page=<%= i %>"><%= i %></a>
+                        </li>
+                    <% } %>
+
+                    <!-- 다음 페이지 버튼 -->
+                    <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                        <a class="page-link" href="/product?page=<%= currentPage + 1 %>" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <!-- 📌 페이지네이션 UI 끝 -->
+
     </div>
 
-    <!-- bottom include -->
     <%- include('../ins/bottom') %>
+
+    <script>
+        async function deleteReview(reviewId) {
+            if (confirm('정말로 이 후기를 삭제하시겠습니까?')) {
+                try {
+                    const response = await fetch(`/product/${reviewId}`, {
+                        method: 'DELETE',
+                    });
+
+                    if (response.ok) {
+                        alert('후기가 성공적으로 삭제되었습니다.');
+                        window.location.reload();
+                    } else {
+                        const errorData = await response.json();
+                        alert('후기 삭제 실패: ' + (errorData.message || '알 수 없는 오류'));
+                    }
+                } catch (error) {
+                    console.error('삭제 요청 중 오류 발생:', error);
+                    alert('네트워크 오류 또는 서버 문제로 삭제에 실패했습니다.');
+                }
+            }
+        }
+    </script>
 </body>
 
 </html>
