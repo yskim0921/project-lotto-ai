@@ -6,7 +6,7 @@ const { connectDB } = require('./db'); // MongoDB 연결
 const app = express();
 const temp2Router = require('./routes/temp2');
 // ===== MongoDB 연결 =====
-let db;
+// let db;
 (async () => {
   db = await connectDB();
 })();
@@ -16,14 +16,16 @@ app.use((req, res, next) => {
   next();
 });
 // ===== View & Static =====
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/upload', express.static(path.join(__dirname, 'public', 'upload', 'product')));
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
 app.use('/temp2', temp2Router);
 app.use(express.json()); // JSON body 처리 (:경고: 필수)
 // ===== Session =====
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(
   session({
     secret: 'secret-for-shop-admin',
