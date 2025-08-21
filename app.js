@@ -36,16 +36,16 @@ app.use(
 const productRouter = require('./routes/products');
 const lottoRouter = require('./routes/lotto');
 const temp1Router = require('./routes/temp1');
-const temp3Router = require('./routes/temp3');
-const temp4Router = require('./routes/temp4');
+const mind_num_matRouter = require('./routes/mind_num_mat');
+const aiSecRouter = require('./routes/aiSec');
 const signin_upRouter = require('./routes/signin_up');
 
 app.use('/product', productRouter);
 app.use('/lotto', lottoRouter);
 app.use('/temp1', temp1Router);
 app.use('/temp2', temp2Router);
-app.use('/temp3', temp3Router);
-app.use('/temp4', temp4Router);
+app.use('/mind_num_mat', mind_num_matRouter);
+app.use('/aiSec', aiSecRouter);
 app.use('/signin_up', signin_upRouter);
 
 module.exports = app;

@@ -18,7 +18,7 @@
   <div class="container right-panel-active">
     <!-- Sign Up -->
     <div class="container__form container--signup">
-      <form action="/auth/signup" method="POST" class="form" id="form1">
+      <form action="/signin_up/signup" method="POST" class="form" id="form1">
         <h2 class="form__title">Sign Up</h2>
         <input type="text" name="username" placeholder="User" class="input" required />
         <input type="email" name="email" placeholder="Email" class="input" required />
@@ -29,7 +29,7 @@
 
     <!-- Sign In -->
     <div class="container__form container--signin">
-      <form action="/auth/signin" method="POST" class="form" id="form2">
+      <form action="/signin_up/signin" method="POST" class="form" id="form2">
         <h2 class="form__title">Sign In</h2>
         <input type="email" name="email" placeholder="Email" class="input" required />
         <input type="password" name="password" placeholder="Password" class="input" required />
@@ -52,6 +52,6 @@
   </div>
 
     <!-- JavaScript 파일 연결 -->
-  <script src="/js/signup.js"></script>
+  <script src="/js/signin_up.js"></script>
 </body>
 </html>
