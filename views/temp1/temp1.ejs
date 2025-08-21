@@ -1,24 +1,300 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <!-- W3.CSS 적용 -->
+    <meta charset="UTF-8" />
+    <title>이용 방법</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
-    <link rel="stylesheet" href="public\css\style.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .usage-cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .usage-card {
+            flex: 1;
+            min-width: 180px;
+            max-width: 250px;
+            border: 1px solid #e9ecef;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 150px;
+        }
+
+        .usage-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+        }
+
+        .usage-card.active {
+            background-color: #0d6efd;
+            color: #fff;
+            border-color: #0d6efd;
+            box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+            transform: scale(1.02);
+        }
+
+        .usage-card.active .usage-card-icon,
+        .usage-card.active .usage-card-title {
+            color: #fff;
+        }
+
+        .usage-card-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #0d6efd;
+        }
+
+        .usage-card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #343a40;
+        }
+
+        .usage-content-area {
+            background-color: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+
+        .usage-content-item {
+            display: none;
+        }
+
+        .usage-content-item.active {
+            display: block;
+        }
+
+        /* 이미지를 감싸는 링크 컨테이너 스타일 */
+        .image-link-container {
+            position: relative; /* 내부 텍스트의 절대 위치 기준 */
+            display: block; /* 링크 전체 영역을 블록으로 만듦 */
+            width: 100%;
+            height: 650px; /* 이미지 비율 유지 */
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            overflow: hidden; /* 모서리 둥글게 적용을 위해 */
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); /* 그림자 적용 */
+        }
+
+        .image-link-container img {
+            display: block; /* 이미지 아래 공백 제거 */
+            width: 100%;
+            height: auto;
+            /* 호버 시 투명도 변경 효과 제거 */
+            /* transition: opacity 0.3s ease; */ 
+        }
+        
+        /* 이미지 위에 항상 표시될 텍스트 캡션 스타일 */
+        .image-caption-text {
+            position: absolute;
+            bottom: 0; /* 이미지 하단에 고정 */
+            left: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* 반투명 검은색 배경 */
+            color: #fff;
+            padding: 0.5rem 0.75rem; /* 패딩 추가 */
+            text-align: center;
+            font-size: 1rem; /* 글씨 크기 조절 */
+            font-weight: bold; /* 굵게 */
+            box-sizing: border-box; /* 패딩이 너비에 포함되도록 */
+        }
+
+        /* 이전 오버레이 관련 호버 효과 제거 */
+        /* .image-link-container:hover .image-overlay-text { opacity: 1; } */
+        /* .image-link-container:hover img { opacity: 0.7; } */
+    </style>
 </head>
 
 <body>
-  <!-- 상단 include -->
-  <%- include('../ins/top') %>
+    <!-- 상단 include -->
+    <%- include('../ins/top') %>
 
-        <h1>이용방법 페이지</h1>
+    <div class="container w-75 mt-5 mx-auto">
+        <header class="text-center mb-5">
+            <h1 class="display-4">저희 홈페이지에 오신것을 환영합니다~!</h1>
+            <p class="lead">무료로 로또번호 받아가세요~ 궁금한 챕터를 클릭하여 상세 이용 방법을 확인해보세요.</p>
+        </header>
 
+        <!-- 📌 카드 섹션 시작 (아이콘 및 제목 변경) -->
+        <div class="usage-cards-container">
+            <div class="usage-card active" data-target="chapter1-content">
+                <span class="usage-card-icon">🔢</span>
+                <span class="usage-card-title">챕터 1</span>
+            </div>
+            <div class="usage-card" data-target="chapter2-content">
+                <span class="usage-card-icon">🌟</span>
+                <span class="usage-card-title">챕터 2</span>
+            </div>
+            <div class="usage-card" data-target="chapter3-content">
+                <span class="usage-card-icon">🔎</span>
+                <span class="usage-card-title">챕터 3</span>
+            </div>
+            <div class="usage-card" data-target="chapter4-content">
+                <span class="usage-card-icon">🤖</span>
+                <span class="usage-card-title">챕터 4</span>
+            </div>
+            <div class="usage-card" data-target="chapter5-content">
+                <span class="usage-card-icon">📝</span>
+                <span class="usage-card-title">챕터 5</span>
+            </div>
+        </div>
+        <!-- 📌 카드 섹션 끝 -->
+
+        <!-- 📌 내용 표시 영역 시작 (내용 변경) -->
+        <div class="usage-content-area">
+            <!-- 챕터 1 내용: 감정숫자 분류표 -> /temp1 (예상 경로) -->
+            <div id="chapter1-content" class="usage-content-item active">
+                <h3>챕터 1: ＊감정숫자 분류표＊ 감정에 따른 숫자 추출 방식 소개</h3>
+                <p>로또 번호, 이제 감정으로 선택해보세요! '감정 숫자 분류표'는 여러분의 현재 감정 상태에 맞춰 행운의 숫자를 찾아드립니다.</p>
+                <ul>
+                    <li><strong>감정 선택:</strong> 기쁨, 슬픔, 분노, 기대 등 현재 느끼는 감정을 선택합니다.</li>
+                    <li><strong>숫자 매칭:</strong> 선택한 감정과 연관된 특별한 숫자 조합을 즉시 확인할 수 있습니다.</li>
+                    <li><strong>나만의 행운 번호:</strong> 개인의 감정 데이터를 기반으로 한 독창적인 로또 번호 생성 방식을 경험해보세요.</li>
+                </ul>
+                <!-- 📌 이미지 링크 및 고정 텍스트 추가 -->
+                <a href="/mind_num_mat" class="image-link-container rounded shadow-sm">
+                    <img src="https://placehold.co/700x350/F0F8FF/0d6efd?text=Emotion+Number+Chart" alt="감정 숫자 분류표 이미지" class="img-fluid">
+                    <div class="image-caption-text">
+                        나를 누르면 해당페이지로 바로 이동해요
+                    </div>
+                </a>
+                <p>여러분의 감정이 곧 당첨 번호가 될 수 있습니다!</p>
+            </div>
+
+            <!-- 챕터 2 내용: 로또분석페이지 -> /lotto (예상 경로) -->
+            <div id="chapter2-content" class="usage-content-item">
+                <h3>챕터 2: ＊로또분석페이지＊ 개인정보 데이터 입력 후 운세와 해몽을 분석</h3>
+                <p>로또 분석 페이지에서 개인 데이터를 입력하고, 운세와 꿈 해몽을 통해 나만의 로또 번호를 찾아보세요.</p>
+                <ol>
+                    <li><strong>개인정보 입력:</strong> 생년월일, 출생시, 별자리 등 간단한 개인 정보를 입력합니다. (※ 입력된 정보는 운세 분석에만 사용됩니다.)</li>
+                    <li><strong>운세 분석:</strong> 입력된 개인 정보를 기반으로 오늘의 운세, 주간 운세 등 로또와 관련된 행운의 기운을 분석합니다.</li>
+                    <li><strong>꿈 해몽:</strong> 최근 꾼 꿈이나 인상 깊었던 꿈의 키워드를 입력하면, 해당 꿈이 로또 당첨과 어떤 연관이 있는지 재미있게 풀어드립니다.</li>
+                    <li><strong>맞춤형 번호 추천:</strong> 분석된 운세와 해몽을 바탕으로 여러분에게 최적화된 로또 번호 조합을 추천해 드립니다.</li>
+                </ol>
+                <!-- 📌 이미지 링크 및 고정 텍스트 추가 -->
+                <a href="/lotto" class="image-link-container rounded shadow-sm">
+                    <img src="https://placehold.co/700x350/F0F8FF/0d6efd?text=Lotto+Analysis+Page" alt="로또 분석 페이지 이미지" class="img-fluid">
+                    <div class="image-caption-text">
+                        나를 누르면 해당페이지로 바로 이동해요
+                    </div>
+                </a>
+                <p>과학과 신비로운 예측이 만난 로또 번호 분석을 경험해보세요!</p>
+            </div>
+
+            <!-- 챕터 3 내용: 당첨번호조회 -> /lotto (또는 로또 관련 서브 경로) -->
+            <div id="chapter3-content" class="usage-content-item">
+                <h3>챕터 3: ＊당첨번호조회＊ 생성된 로또번호 맞춰보기</h3>
+                <p>이 섹션에서는 여러분이 생성했거나 가지고 있는 로또 번호가 실제 당첨 번호와 얼마나 일치하는지 손쉽게 확인할 수 있습니다.</p>
+                <ol>
+                    <li><strong>회차 선택:</strong> 조회하고 싶은 로또 회차를 선택합니다.</li>
+                    <li><strong>내 번호 입력:</strong> 여러분이 가지고 있는 로또 번호 조합을 입력 창에 정확히 기입합니다.</li>
+                    <li><strong>당첨 결과 확인:</strong> 입력된 번호와 해당 회차의 당첨 번호를 비교하여, 몇 개의 숫자가 일치하는지, 그리고 어떤 등수에 해당하는지 즉시 알려드립니다.</li>
+                    <li><strong>과거 당첨 번호:</strong> 이전 회차들의 당첨 번호 현황도 한눈에 확인할 수 있습니다.</li>
+                </ol>
+                <!-- 📌 이미지 링크 및 고정 텍스트 추가 -->
+                <a href="/temp2" class="image-link-container rounded shadow-sm">
+                    <img src="https://placehold.co/700x350/F0F8FF/0d6efd?text=Check+Lotto+Numbers+Page" alt="당첨 번호 조회 페이지 이미지" class="img-fluid">
+                    <div class="image-caption-text">
+                        나를 누르면 해당페이지로 바로 이동해요
+                    </div>
+                </a>
+                <p>이제 복잡한 과정 없이 쉽고 빠르게 당첨 여부를 확인해보세요!</p>
+            </div>
+
+            <!-- 챕터 4 내용: 챗봇AI상담 -> /temp4 (예상 경로) -->
+            <div id="chapter4-content" class="usage-content-item">
+                <h3>챕터 4: ＊챗봇AI상담＊ 홈페이지에 궁금한게 있으면 언제든지 물어보세요</h3>
+                <p>챗봇 AI 상담 서비스를 통해 홈페이지 이용 중 발생하는 모든 궁금증을 실시간으로 해결하세요!</p>
+                <ul>
+                    <li><strong>24시간 상담:</strong> 언제든지 챗봇에게 질문하고 즉각적인 답변을 받을 수 있습니다.</li>
+                    <li><strong>다양한 문의 해결:</strong> 서비스 이용 방법, 오류 보고, 기능 문의 등 어떤 질문이든 가능합니다.</li>
+                    <li><strong>스마트한 답변:</strong> AI 기반 챗봇이 여러분의 질문을 정확히 이해하고 가장 적절한 정보를 제공합니다.</li>
+                    <li><strong>친절한 안내:</strong> 필요하다면 추가적인 가이드나 관련 페이지 링크도 안내해 드립니다.</li>
+                </ul>
+                <!-- 📌 이미지 링크 및 고정 텍스트 추가 -->
+                <a href="/aiSec" class="image-link-container rounded shadow-sm">
+                    <img src="https://placehold.co/700x350/F0F8FF/0d6efd?text=Chatbot+AI+Page" alt="챗봇 AI 상담 페이지 이미지" class="img-fluid">
+                    <div class="image-caption-text">
+                        나를 누르면 해당페이지로 바로 이동해요
+                    </div>
+                </a>
+                <p>궁금한 점이 생기면 주저하지 말고 챗봇에게 물어보세요!</p>
+            </div>
+
+            <!-- 챕터 5 내용: 후기게시판 -> /product -->
+            <div id="chapter5-content" class="usage-content-item">
+                <h3>챕터 5: ＊후기게시판＊ 감정을 기반으로 생성된 로또를 널리 알려주세요~</h3>
+                <p>여러분만의 특별한 로또 경험을 후기 게시판에 공유하고, 다른 사용자들과 소통해보세요!</p>
+                <ul>
+                    <li><strong>나만의 로또 경험 공유:</strong> 감정 분석을 통해 얻은 로또 번호로 당첨되었거나, 특별한 경험이 있다면 후기를 남겨주세요.</li>
+                    <li><strong>다른 사용자 후기 확인:</strong> 다른 사용자들의 흥미로운 로또 경험과 당첨 후기를 읽어보세요.</li>
+                    <li><strong>댓글로 소통:</strong> 각 후기에 댓글을 남기거나 받아보며 사용자들과 정보를 교환하고 응원할 수 있습니다.</li>
+                    <li><strong>사진 첨부:</strong> 후기 작성 시 관련 사진을 첨부하여 더욱 생생한 경험을 공유할 수 있습니다.</li>
+                </ul>
+                <!-- 📌 이미지 링크 및 고정 텍스트 추가 -->
+                <a href="/product" class="image-link-container rounded shadow-sm">
+                    <img src="https://placehold.co/700x350/F0F8FF/0d6efd?text=Review+Board+Page" alt="후기 게시판 페이지 이미지" class="img-fluid">
+                    <div class="image-caption-text">
+                        나를 누르면 해당페이지로 바로 이동해요
+                    </div>
+                </a>
+                <p>여러분의 소중한 후기가 다른 사용자들에게 큰 힘이 됩니다!</p>
+            </div>
+        </div>
+        <!-- 📌 내용 표시 영역 끝 -->
+
+    </div>
 
     <!-- bottom include -->
     <%- include('../ins/bottom') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const usageCards = document.querySelectorAll('.usage-card');
+            const usageContentItems = document.querySelectorAll('.usage-content-item');
+
+            function showContent(targetId) {
+                usageCards.forEach(card => card.classList.remove('active'));
+                usageContentItems.forEach(item => item.classList.remove('active'));
+
+                const activeCard = document.querySelector(`.usage-card[data-target="${targetId}"]`);
+                if (activeCard) {
+                    activeCard.classList.add('active');
+                }
+
+                const targetContent = document.getElementById(targetId);
+                if (targetContent) {
+                    targetContent.classList.add('active');
+                }
+            }
+
+            usageCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const targetId = card.dataset.target;
+                    showContent(targetId);
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

@@ -192,7 +192,6 @@
                     });
 
                     if (response.ok) {
-                        alert('댓글이 성공적으로 삭제되었습니다.');
                         fetchComments(); // 댓글 목록 새로고침
                     } else {
                         const errorData = await response.json();

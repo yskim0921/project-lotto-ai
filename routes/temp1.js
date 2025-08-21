@@ -10,7 +10,8 @@ const { ObjectId } = require('mongodb');
 // ===== Routes =====
 
 router.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/preuse.html'));
+  // res.sendFile(path.join(__dirname, '../public/preuse.html'));
+  res.render('temp1/temp1')
 });
 
 
