@@ -84,48 +84,44 @@
 
         /* 이미지를 감싸는 링크 컨테이너 스타일 */
         .image-link-container {
-            position: relative; /* 내부 텍스트의 절대 위치 기준 */
-            display: block; /* 링크 전체 영역을 블록으로 만듦 */
+            position: relative;
+            display: block;
             width: 100%;
-            height: 650px; /* 이미지 비율 유지 */
+            height: 650px; /* 이미지 높이 고정 */
             margin-top: 1rem;
             margin-bottom: 1rem;
             border-radius: 0.5rem;
-            overflow: hidden; /* 모서리 둥글게 적용을 위해 */
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); /* 그림자 적용 */
+            overflow: hidden;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
         }
 
         .image-link-container img {
-            display: block; /* 이미지 아래 공백 제거 */
+            display: block;
             width: 100%;
-            height: auto;
-            /* 호버 시 투명도 변경 효과 제거 */
-            /* transition: opacity 0.3s ease; */ 
+            height: 100%; /* 부모 컨테이너의 650px 높이에 맞춰짐 */
+            object-fit: contain; /* 이미지가 잘리지 않고 전체가 보이도록 비율 유지 */
+            background-color: #f0f0f0; /* contain 시 생기는 빈 공간 채우기 (선택 사항) */
         }
-        
+
         /* 이미지 위에 항상 표시될 텍스트 캡션 스타일 */
         .image-caption-text {
             position: absolute;
-            bottom: 0; /* 이미지 하단에 고정 */
+            bottom: 0;
             left: 0;
             width: 100%;
-            background-color: rgba(0, 0, 0, 0.7); /* 반투명 검은색 배경 */
+            background-color: rgba(0, 0, 0, 0.7);
             color: #fff;
-            padding: 0.5rem 0.75rem; /* 패딩 추가 */
+            padding: 0.5rem 0.75rem;
             text-align: center;
-            font-size: 1rem; /* 글씨 크기 조절 */
-            font-weight: bold; /* 굵게 */
-            box-sizing: border-box; /* 패딩이 너비에 포함되도록 */
+            font-size: 1rem;
+            font-weight: bold;
+            box-sizing: border-box;
         }
-
-        /* 이전 오버레이 관련 호버 효과 제거 */
-        /* .image-link-container:hover .image-overlay-text { opacity: 1; } */
-        /* .image-link-container:hover img { opacity: 0.7; } */
     </style>
 </head>
 
 <body>
-    <!-- 상단 include -->
+    <!-- 상단 include (고객센터 메뉴 추가될 예정) -->
     <%- include('../ins/top') %>
 
     <div class="container w-75 mt-5 mx-auto">
@@ -156,12 +152,17 @@
                 <span class="usage-card-icon">📝</span>
                 <span class="usage-card-title">챕터 5</span>
             </div>
+            <!-- 📌 챕터 6: 고객센터 카드 추가 -->
+            <div class="usage-card" data-target="chapter6-content">
+                <span class="usage-card-icon">📞</span>
+                <span class="usage-card-title">챕터 6</span>
+            </div>
         </div>
         <!-- 📌 카드 섹션 끝 -->
 
         <!-- 📌 내용 표시 영역 시작 (내용 변경) -->
         <div class="usage-content-area">
-            <!-- 챕터 1 내용: 감정숫자 분류표 -> /temp1 (예상 경로) -->
+            <!-- 챕터 1 내용: 감정숫자 분류표 -> /mind_num_mat -->
             <div id="chapter1-content" class="usage-content-item active">
                 <h3>챕터 1: ＊감정숫자 분류표＊ 감정에 따른 숫자 추출 방식 소개</h3>
                 <p>로또 번호, 이제 감정으로 선택해보세요! '감정 숫자 분류표'는 여러분의 현재 감정 상태에 맞춰 행운의 숫자를 찾아드립니다.</p>
@@ -180,7 +181,7 @@
                 <p>여러분의 감정이 곧 당첨 번호가 될 수 있습니다!</p>
             </div>
 
-            <!-- 챕터 2 내용: 로또분석페이지 -> /lotto (예상 경로) -->
+            <!-- 챕터 2 내용: 로또분석페이지 -> /lotto -->
             <div id="chapter2-content" class="usage-content-item">
                 <h3>챕터 2: ＊로또분석페이지＊ 개인정보 데이터 입력 후 운세와 해몽을 분석</h3>
                 <p>로또 분석 페이지에서 개인 데이터를 입력하고, 운세와 꿈 해몽을 통해 나만의 로또 번호를 찾아보세요.</p>
@@ -200,7 +201,7 @@
                 <p>과학과 신비로운 예측이 만난 로또 번호 분석을 경험해보세요!</p>
             </div>
 
-            <!-- 챕터 3 내용: 당첨번호조회 -> /lotto (또는 로또 관련 서브 경로) -->
+            <!-- 챕터 3 내용: 당첨번호조회 -> /temp2 -->
             <div id="chapter3-content" class="usage-content-item">
                 <h3>챕터 3: ＊당첨번호조회＊ 생성된 로또번호 맞춰보기</h3>
                 <p>이 섹션에서는 여러분이 생성했거나 가지고 있는 로또 번호가 실제 당첨 번호와 얼마나 일치하는지 손쉽게 확인할 수 있습니다.</p>
@@ -220,7 +221,7 @@
                 <p>이제 복잡한 과정 없이 쉽고 빠르게 당첨 여부를 확인해보세요!</p>
             </div>
 
-            <!-- 챕터 4 내용: 챗봇AI상담 -> /temp4 (예상 경로) -->
+            <!-- 챕터 4 내용: 챗봇AI상담 -> /aiSec -->
             <div id="chapter4-content" class="usage-content-item">
                 <h3>챕터 4: ＊챗봇AI상담＊ 홈페이지에 궁금한게 있으면 언제든지 물어보세요</h3>
                 <p>챗봇 AI 상담 서비스를 통해 홈페이지 이용 중 발생하는 모든 궁금증을 실시간으로 해결하세요!</p>
@@ -258,6 +259,26 @@
                     </div>
                 </a>
                 <p>여러분의 소중한 후기가 다른 사용자들에게 큰 힘이 됩니다!</p>
+            </div>
+
+            <!-- 📌 챕터 6: 고객센터 내용 추가 -->
+            <div id="chapter6-content" class="usage-content-item">
+                <h3>챕터 6: ＊고객센터＊ 홈페이지 기능 제안 및 문의</h3>
+                <p>홈페이지 이용 중 불편한 점, 개선할 부분, 또는 새로운 기능에 대한 제안이 있으신가요? 고객센터를 통해 자유롭게 의견을 남겨주세요!</p>
+                <ul>
+                    <li><strong>불만사항 등록:</strong> 사용 중 발생한 문제점이나 불만사항을 구체적으로 작성해주세요.</li>
+                    <li><strong>기능 제안:</strong> 서비스에 추가되었으면 하는 새로운 기능이나 개선 아이디어를 제안해주세요.</li>
+                    <li><strong>빠른 피드백:</strong> 남겨주신 문의에 대해 최대한 빠르게 답변드리고 해결 상황을 공유합니다.</li>
+                    <li><strong>투명한 소통:</strong> 다른 사용자의 문의와 우리의 답변을 확인하며 투명하게 소통할 수 있습니다.</li>
+                </ul>
+                <!-- 📌 이미지 링크 및 고정 텍스트 추가 -->
+                <a href="/customer" class="image-link-container rounded shadow-sm">
+                    <img src="https://placehold.co/700x350/F0F8FF/0d6efd?text=Customer+Service+Center" alt="고객센터 페이지 이미지" class="img-fluid">
+                    <div class="image-caption-text">
+                        나를 누르면 고객센터 페이지로 바로 이동해요
+                    </div>
+                </a>
+                <p>여러분의 소중한 의견이 더 나은 서비스를 만듭니다.</p>
             </div>
         </div>
         <!-- 📌 내용 표시 영역 끝 -->

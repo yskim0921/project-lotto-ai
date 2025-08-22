@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>고객센터</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 📌 jQuery CDN 추가 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .inquiry-item {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 0.375rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 0.05rem 0.15rem rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease-in-out;
+        }
+
+        .inquiry-item.resolved {
+            background-color: #e2f0d9; /* 해결됨 */
+            border-color: #a7d9b5;
+        }
+
+        .inquiry-item.resolved .inquiry-content {
+            text-decoration: line-through; /* 작대기 긋기 */
+            color: #6c757d;
+        }
+
+        .inquiry-meta {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-bottom: 0.75rem;
+        }
+
+        .inquiry-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .inquiry-content {
+            white-space: pre-wrap;
+            margin-bottom: 1rem;
+        }
+
+        .comment-section {
+            background-color: #fff;
+            border-top: 1px dashed #e9ecef;
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+
+        .comment-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comment-item {
+            background-color: #f0f2f5;
+            border-radius: 0.3rem;
+            padding: 0.2rem 0.4rem; /* 흰색 영역 크기 조정 */
+            margin-bottom: 0.5rem;
+        }
+
+        .comment-item-meta {
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 0.25rem;
+        }
+        .comment-pagination-info {
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-align: center;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        /* 📌 댓글 수정 폼 숨김 CSS */
+        .edit-comment-area {
+            display: none;
+        }
+        /* 📌 문의글 수정 폼 숨김 CSS */
+        .edit-inquiry-form {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #e9f5ff; /* 수정 폼 배경색 */
+            border-radius: 0.5rem;
+            border: 1px solid #cceeff;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 상단 include -->
+    <%- include('../ins/top') %>
+
+    <div class="container w-75 mt-5 mx-auto">
+        <!-- 📌 제목과 버튼을 같은 줄에 배치하기 위한 d-flex와 justify-content-between 사용 -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">고객센터 - 기능 제안 및 불만사항</h2>
+            <!-- 📌 새로운 문의 작성 버튼 -->
+            <button class="btn btn-info" id="toggleFormBtn">
+                새로운 문의 작성하기
+            </button>
+        </div>
+        
+        <hr /> <!-- 📌 hr 태그는 제목과 버튼 아래에 위치 -->
+
+        <!-- 📌 불만사항/제안 등록 폼 (hr 바로 아래로 이동) -->
+        <!-- jQuery는 display:none 대신 .hide()를 사용하므로, 초기 상태를 숨길 필요가 없습니다. -->
+        <div id="newInquiryForm" class="card p-4 mb-4 shadow-sm">
+            <h4 class="mb-3">새로운 문의 등록</h4>
+            <div class="mb-3">
+                <label for="inquiryAuthor" class="form-label">작성자</label>
+                <input type="text" class="form-control" id="inquiryAuthor" placeholder="작성자 이름을 입력하세요" required>
+            </div>
+            <div class="mb-3">
+                <label for="inquiryTitle" class="form-label">제목</label>
+                <input type="text" class="form-control" id="inquiryTitle" placeholder="문의 제목을 입력하세요" required>
+            </div>
+            <div class="mb-3">
+                <label for="inquiryContent" class="form-label">내용</label>
+                <textarea class="form-control" id="inquiryContent" rows="4" placeholder="불만사항이나 제안 내용을 입력하세요..." required></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="submitInquiry()">문의 등록</button>
+            <button class="btn btn-secondary mt-2" id="closeFormBtn">닫기</button>
+        </div>
+
+        <!-- 📌 등록된 문의 목록 (폼 바로 아래에 위치) -->
+        <!-- 📌 등록된 문의 헤딩 수정: 문의 건수가 0일 때 괄호 사라지게 함 -->
+        <h3 class="mb-4">등록된 문의 <span id="inquiryCountText"></span></h3>
+        <div class="alert alert-info text-center" id="noInquiriesMessage" style="display:none;">
+            등록된 문의사항이 없습니다. 새로운 문의를 남겨주세요!
+        </div>
+        <div id="inquiryList">
+            <!-- 문의 사항이 여기에 동적으로 로드됩니다. -->
+        </div>
+    </div>
+
+    <!-- bottom include -->
+    <%- include('../ins/bottom') %>
+
+    <script>
+        // HTML 이스케이프 함수 (보안을 위해 사용자 입력 내용 표시 전 사용)
+        function escapeHTML(str) {
+            const div = document.createElement('div');
+            div.appendChild(document.createTextNode(str));
+            return div.innerHTML;
+        }
+
+        // 📌 jQuery를 사용하여 폼 토글 기능 구현
+        $(document).ready(function() {
+            // 폼을 초기에는 숨김
+            $('#newInquiryForm').hide(); 
+
+            // '새로운 문의 작성하기' 버튼 클릭 시 폼 토글
+            $('#toggleFormBtn').on('click', function() {
+                $('#newInquiryForm').slideToggle(); // 부드러운 슬라이드 토글 효과
+            });
+
+            // '닫기' 버튼 클릭 시 폼 숨김
+            $('#closeFormBtn').on('click', function() {
+                $('#newInquiryForm').slideUp(); // 부드럽게 폼을 위로 슬라이드하여 숨김
+            });
+        });
+        
+        // 불만사항/제안 목록 불러오기
+        async function fetchInquiries() {
+            try {
+                const response = await fetch(`${window.location.origin}/customer/inquiries`);
+                if (response.ok) {
+                    const contentType = response.headers.get("content-type");
+                    if (contentType && contentType.includes("application/json")) {
+                        const inquiries = await response.json();
+                        console.log('>>> fetched inquiries data (JSON):', inquiries);
+                        renderInquiries(inquiries);
+                    } else {
+                        const textResponse = await response.text();
+                        console.error('>>> Received non-JSON response from /customer/inquiries (Content-Type:', contentType, '):', textResponse);
+                        document.getElementById('noInquiriesMessage').style.display = 'block';
+                        alert('오류: 서버 응답이 올바른 JSON 형식이 아닙니다. 개발자 도구 콘솔을 확인해주세요.');
+                    }
+                } else {
+                    const errorText = await response.text();
+                    console.error('>>> Failed to fetch inquiries (HTTP Status:', response.status, 'Response Text:', errorText);
+                    document.getElementById('noInquiriesMessage').style.display = 'block';
+                    alert(`문의사항 불러오기 실패: HTTP 상태 ${response.status}. 개발자 도구 콘솔을 확인해주세요.`);
+                }
+            } catch (error) {
+                console.error('>>> Network error during fetchInquiries:', error);
+                document.getElementById('noInquiriesMessage').style.display = 'block';
+                alert('네트워크 오류 또는 서버 문제로 문의사항을 불러오지 못했습니다.');
+            }
+        }
+
+        // 불만사항/제안 렌더링
+        function renderInquiries(inquiries) {
+            console.log('>>> renderInquiries called with:', inquiries);
+            const inquiryListDiv = document.getElementById('inquiryList');
+            inquiryListDiv.innerHTML = ''; // 기존 목록 비우기
+            
+            // 📌 등록된 문의 건수 텍스트 업데이트 로직 변경
+            const inquiryCountTextSpan = document.getElementById('inquiryCountText');
+            if (inquiries.length > 0) {
+                inquiryCountTextSpan.textContent = `(${inquiries.length}건)`;
+            } else {
+                inquiryCountTextSpan.textContent = ''; // 문의가 없으면 괄호도 함께 제거
+            }
+            
+            if (inquiries.length === 0) {
+                document.getElementById('noInquiriesMessage').style.display = 'block';
+                console.log('>>> No inquiries found, displaying message.');
+                return;
+            } else {
+                document.getElementById('noInquiriesMessage').style.display = 'none';
+            }
+
+            inquiries.forEach(inquiry => {
+                console.log('>>> Rendering inquiry:', inquiry);
+                const inquiryItem = document.createElement('div');
+                inquiryItem.className = `inquiry-item ${inquiry.resolved ? 'resolved' : ''}`;
+                inquiryItem.id = `inquiry-${inquiry._id}`;
+
+                inquiryItem.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="inquiry-title" id="inquiryTitleDisplay-${inquiry._id}">${escapeHTML(inquiry.title)}</h5>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="resolvedCheck-${inquiry._id}" 
+                                ${inquiry.resolved ? 'checked' : ''} 
+                                onclick="toggleResolved('${inquiry._id}', this.checked)">
+                            <label class="form-check-label" for="resolvedCheck-${inquiry._id}">
+                                해결됨
+                            </label>
+                        </div>
+                    </div>
+                    <div class="inquiry-meta">
+                        작성자: <strong id="inquiryAuthorDisplay-${inquiry._id}">${escapeHTML(inquiry.author)}</strong> | 등록일: ${new Date(inquiry.createdAt).toLocaleString()}
+                        <button class="btn btn-sm btn-danger float-end ms-2" onclick="deleteInquiry('${inquiry._id}')">삭제</button>
+                        <button class="btn btn-sm btn-warning float-end" onclick="toggleInquiryEditMode('${inquiry._id}')">수정</button> <!-- 📌 문의글 수정 버튼 추가 -->
+                    </div>
+                    <p class="inquiry-content" id="inquiryContentDisplay-${inquiry._id}">${escapeHTML(inquiry.content)}</p>
+
+                    <!-- 📌 문의글 수정 폼 (각 문의글 내부에 추가) -->
+                    <div class="edit-inquiry-form" id="editInquiryForm-${inquiry._id}">
+                        <h6 class="mb-3">문의글 수정</h6>
+                        <div class="mb-2">
+                            <label for="editInquiryAuthor-${inquiry._id}" class="form-label">작성자</label>
+                            <input type="text" class="form-control" id="editInquiryAuthor-${inquiry._id}">
+                        </div>
+                        <div class="mb-2">
+                            <label for="editInquiryTitle-${inquiry._id}" class="form-label">제목</label>
+                            <input type="text" class="form-control" id="editInquiryTitle-${inquiry._id}">
+                        </div>
+                        <div class="mb-2">
+                            <label for="editInquiryContent-${inquiry._id}" class="form-label">내용</label>
+                            <textarea class="form-control" id="editInquiryContent-${inquiry._id}" rows="4"></textarea>
+                        </div>
+                        <div class="d-flex justify-content-end gap-2 mt-3">
+                            <button class="btn btn-success btn-sm" onclick="saveInquiryEdit('${inquiry._id}')">저장</button>
+                            <button class="btn btn-secondary btn-sm" onclick="cancelInquiryEdit('${inquiry._id}')">취소</button>
+                        </div>
+                    </div>
+
+                    <!-- 댓글 섹션 -->
+                    <div class="comment-section">
+                        <h6><span id="commentCountDisplay-${inquiry._id}"></span></h6>
+                        <ul id="commentList-${inquiry._id}" class="comment-list">
+                            <!-- 댓글이 여기에 동적으로 로드됩니다. -->
+                        </ul>
+                        <!-- 📌 댓글 페이지네이션 정보 및 컨테이너 -->
+                        <div id="commentPaginationInfo-${inquiry._id}" class="comment-pagination-info"></div>
+                        <nav aria-label="Comment pagination" class="comment-pagination-nav">
+                            <ul class="pagination pagination-sm justify-content-center mt-3" id="commentPagination-${inquiry._id}">
+                                <!-- 페이지네이션 링크가 여기에 동적으로 생성됩니다. -->
+                            </ul>
+                        </nav>
+                        <div class="input-group mt-1">
+                            <input type="text" class="form-control form-control-sm" id="commentInput-${inquiry._id}" placeholder="관리자 답글..." required>
+                            <button class="btn btn-outline-secondary btn-sm" type="button" onclick="submitComment('${inquiry._id}')">등록</button>
+                        </div>
+                    </div>
+                `;
+                inquiryListDiv.appendChild(inquiryItem);
+                
+                // 댓글 로드 (AJAX) - 초기 페이지는 1페이지
+                fetchComments(inquiry._id, 1);
+            });
+        }
+
+        // 불만사항/제안 등록 (기존과 동일)
+        async function submitInquiry() {
+            const author = document.getElementById('inquiryAuthor').value.trim();
+            const title = document.getElementById('inquiryTitle').value.trim();
+            const content = document.getElementById('inquiryContent').value.trim();
+
+            if (!author || !title || !content) {
+                alert('모든 필드를 입력해주세요.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${window.location.origin}/customer/inquiries`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ author, title, content })
+                });
+
+                if (response.ok) {
+                    document.getElementById('inquiryAuthor').value = '';
+                    document.getElementById('inquiryTitle').value = '';
+                    document.getElementById('inquiryContent').value = '';
+                    fetchInquiries(); // 목록 새로고침
+                    $('#newInquiryForm').slideUp(); // 📌 jQuery 사용하여 폼 숨기기
+                } else {
+                    const errorData = await response.json().catch(() => response.text());
+                    alert('문의 등록 실패: ' + (errorData.message || errorData || '알 수 없는 오류'));
+                    console.error('문의 등록 실패:', response.status, errorData);
+                }
+            } catch (error) {
+                console.error('문의 등록 중 오류:', error);
+                alert('네트워크 오류 또는 서버 문제로 문의 등록에 실패했습니다.');
+            }
+        }
+
+        // 불만사항/제안 해결 상태 토글 (기존과 동일)
+        async function toggleResolved(inquiryId, isResolved) {
+            try {
+                const response = await fetch(`${window.location.origin}/customer/inquiries/${inquiryId}/resolve`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ resolved: isResolved })
+                });
+
+                if (response.ok) {
+                    const inquiryItem = document.getElementById(`inquiry-${inquiryId}`);
+                    if (isResolved) {
+                        inquiryItem.classList.add('resolved');
+                    } else {
+                        inquiryItem.classList.remove('resolved');
+                    }
+                } else {
+                    const errorData = await response.json().catch(() => response.text());
+                    alert('해결 상태 변경 실패: ' + (errorData.message || errorData || '알 수 없는 오류'));
+                    console.error('해결 상태 변경 실패:', response.status, errorData);
+                    document.getElementById(`resolvedCheck-${inquiryId}`).checked = !isResolved;
+                }
+            } catch (error) {
+                console.error('해결 상태 변경 중 오류:', error);
+                alert('네트워크 오류 또는 서버 문제로 해결 상태 변경에 실패했습니다.');
+                document.getElementById(`resolvedCheck-${inquiryId}`).checked = !isResolved;
+            }
+        }
+
+        // 불만사항/제안 삭제 (기존과 동일)
+        async function deleteInquiry(inquiryId) {
+            if (!confirm('정말로 이 문의사항을 삭제하시겠습니까? 관련 댓글도 모두 삭제됩니다.')) {
+                return;
+            }
+            try {
+                const response = await fetch(`${window.location.origin}/customer/inquiries/${inquiryId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert('문의사항이 성공적으로 삭제되었습니다.');
+                    fetchInquiries(); // 목록 새로고침
+                } else {
+                    const errorData = await response.json().catch(() => response.text());
+                    alert('문의사항 삭제 실패: ' + (errorData.message || errorData || '알 수 없는 오류'));
+                    console.error('문의사항 삭제 실패:', response.status, errorData);
+                }
+            } catch (error) {
+                console.error('문의사항 삭제 중 오류:', error);
+                alert('네트워크 오류 또는 서버 문제로 문의사항 삭제에 실패했습니다.');
+            }
+        }
+
+        // 📌 문의글 수정 모드 토글 함수
+        function toggleInquiryEditMode(inquiryId) {
+            const displayTitle = document.getElementById(`inquiryTitleDisplay-${inquiryId}`);
+            const displayAuthor = document.getElementById(`inquiryAuthorDisplay-${inquiryId}`);
+            const displayContent = document.getElementById(`inquiryContentDisplay-${inquiryId}`);
+            const editForm = document.getElementById(`editInquiryForm-${inquiryId}`);
+
+            const editTitle = document.getElementById(`editInquiryTitle-${inquiryId}`);
+            const editAuthor = document.getElementById(`editInquiryAuthor-${inquiryId}`);
+            const editContent = document.getElementById(`editInquiryContent-${inquiryId}`);
+
+            // 현재 내용을 수정 폼에 채우기
+            editTitle.value = displayTitle.textContent;
+            editAuthor.value = displayAuthor.textContent;
+            editContent.value = displayContent.textContent;
+
+            // jQuery를 사용하여 부드러운 토글
+            $(displayTitle).closest('.inquiry-item').find('.inquiry-content').hide(); // 원래 내용을 숨김
+            $(editForm).slideToggle(); // 수정 폼 토글
+        }
+
+        // 📌 문의글 수정 취소 함수
+        function cancelInquiryEdit(inquiryId) {
+            const displayTitle = document.getElementById(`inquiryTitleDisplay-${inquiryId}`);
+            const editForm = document.getElementById(`editInquiryForm-${inquiryId}`);
+
+            // jQuery를 사용하여 부드럽게 숨김
+            $(editForm).slideUp(); // 수정 폼 숨김
+            $(displayTitle).closest('.inquiry-item').find('.inquiry-content').show(); // 원래 내용 다시 표시
+        }
+
+        // 📌 문의글 수정 저장 함수
+        async function saveInquiryEdit(inquiryId) {
+            const updatedTitle = document.getElementById(`editInquiryTitle-${inquiryId}`).value.trim();
+            const updatedAuthor = document.getElementById(`editInquiryAuthor-${inquiryId}`).value.trim();
+            const updatedContent = document.getElementById(`editInquiryContent-${inquiryId}`).value.trim();
+
+            if (!updatedTitle || !updatedAuthor || !updatedContent) {
+                alert('제목, 작성자, 내용을 모두 입력해주세요.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${window.location.origin}/customer/inquiries/${inquiryId}`, {
+                    method: 'PUT', // PUT 요청
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title: updatedTitle,
+                        author: updatedAuthor,
+                        content: updatedContent
+                    })
+                });
+
+                if (response.ok) {
+                    alert('문의글이 성공적으로 수정되었습니다.');
+                    // UI 업데이트
+                    document.getElementById(`inquiryTitleDisplay-${inquiryId}`).textContent = updatedTitle;
+                    document.getElementById(`inquiryAuthorDisplay-${inquiryId}`).textContent = updatedAuthor;
+                    document.getElementById(`inquiryContentDisplay-${inquiryId}`).textContent = updatedContent;
+                    cancelInquiryEdit(inquiryId); // 수정 모드 닫기
+                    fetchInquiries(); // 전체 목록 새로고침 (정렬/필터링 등이 적용될 수 있으므로)
+                } else {
+                    const errorData = await response.json().catch(() => response.text());
+                    alert('문의글 수정 실패: ' + (errorData.message || errorData || '알 수 없는 오류'));
+                    console.error('문의글 수정 실패:', response.status, errorData);
+                }
+            } catch (error) {
+                console.error('문의글 수정 중 네트워크 오류:', error);
+                alert('네트워크 오류 또는 서버 문제로 문의글 수정에 실패했습니다.');
+            }
+        }
+
+        // 댓글 불러오기 (기존과 동일)
+        async function fetchComments(inquiryId, page = 1) {
+            try {
+                const response = await fetch(`${window.location.origin}/customer/inquiries/${inquiryId}/comments?page=${page}`);
+                if (response.ok) {
+                    const contentType = response.headers.get("content-type");
+                    if (contentType && contentType.includes("application/json")) {
+                        const data = await response.json();
+                        renderComments(inquiryId, data.comments, data.currentPage, data.totalPages, data.totalComments);
+                    } else {
+                        const textResponse = await response.text();
+                        console.error('>>> Received non-JSON response for comments (Content-Type:', contentType, '):', textResponse);
+                    }
+                } else {
+                    const errorText = await response.text();
+                    console.error(`문의 ${inquiryId}의 댓글을 불러오지 못했습니다 (HTTP Status: ${response.status}, Response Text: ${errorText}).`);
+                }
+            } catch (error) {
+                console.error(`문의 ${inquiryId}의 댓글 불러오기 중 오류:`, error);
+            }
+        }
+
+        // 댓글 렌더링 (기존과 동일)
+        function renderComments(inquiryId, comments, currentPage, totalPages, totalComments) {
+            const commentList = document.getElementById(`commentList-${inquiryId}`);
+            commentList.innerHTML = '';
+            
+            // 📌 관리자 comment 옆 괄호 및 숫자 표시 로직 변경
+            const commentCountDisplaySpan = document.getElementById(`commentCountDisplay-${inquiryId}`);
+            if (totalComments > 0) {
+                commentCountDisplaySpan.textContent = `(${totalComments})`;
+            } else {
+                commentCountDisplaySpan.textContent = ''; // 0개일 때는 괄호도 표시하지 않음
+            }
+
+            const paginationInfoDiv = document.getElementById(`commentPaginationInfo-${inquiryId}`);
+            const safeTotalComments = totalComments || 0;
+            const safeTotalPages = totalPages || 1;
+
+            if (safeTotalComments === 0) {
+                paginationInfoDiv.innerHTML = '';
+            } else {
+                paginationInfoDiv.innerHTML = `총 댓글: ${safeTotalComments}개 (페이지 ${currentPage}/${safeTotalPages})`;
+            }
+
+            comments.forEach(comment => {
+                const li = document.createElement('li');
+                li.className = 'comment-item';
+                // 📌 댓글 내용 표시 및 수정 폼 구조 변경
+                li.innerHTML = `
+                    <div class="comment-item-meta">
+                        <strong>${escapeHTML(comment.author || '익명')}</strong> | ${new Date(comment.createdAt).toLocaleString()}
+                        <button class="btn btn-danger btn-sm float-end ms-2" onclick="deleteComment('${inquiryId}', '${comment._id}', ${currentPage})">삭제</button>
+                        <button class="btn btn-warning btn-sm float-end" onclick="editComment('${inquiryId}', '${comment._id}')">수정</button>
+                    </div>
+                    <p class="comment-content" id="commentContentDisplay-${comment._id}">${escapeHTML(comment.content)}</p>
+                    
+                    <div class="edit-comment-area" id="editCommentArea-${comment._id}">
+                        <textarea class="form-control mb-2" id="editCommentContent-${comment._id}" rows="3"></textarea>
+                        <button class="btn btn-success btn-sm" onclick="saveComment('${inquiryId}', '${comment._id}', ${currentPage})">저장</button>
+                        <button class="btn btn-secondary btn-sm ms-2" onclick="cancelEdit('${comment._id}')">취소</button>
+                    </div>
+                `;
+                commentList.appendChild(li);
+            });
+
+            const paginationUl = document.getElementById(`commentPagination-${inquiryId}`);
+            paginationUl.innerHTML = '';
+
+            if (safeTotalPages > 1) {
+                const prevLi = document.createElement('li');
+                prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+                prevLi.innerHTML = `<a class="page-link" href="#" onclick="fetchComments('${inquiryId}', ${currentPage - 1})">&laquo;</a>`;
+                paginationUl.appendChild(prevLi);
+
+                for (let i = 1; i <= safeTotalPages; i++) {
+                    const pageLi = document.createElement('li');
+                    pageLi.className = `page-item ${currentPage === i ? 'active' : ''}`;
+                    pageLi.innerHTML = `<a class="page-link" href="#" onclick="fetchComments('${inquiryId}', ${i})">${i}</a>`;
+                    paginationUl.appendChild(pageLi);
+                }
+
+                const nextLi = document.createElement('li');
+                nextLi.className = `page-item ${currentPage === safeTotalPages ? 'disabled' : ''}`;
+                nextLi.innerHTML = `<a class="page-link" href="#" onclick="fetchComments('${inquiryId}', ${currentPage + 1})">&raquo;</a>`;
+                paginationUl.appendChild(nextLi);
+            }
+        }
+
+        // 📌 댓글 수정 모드 활성화 함수 (기존과 동일)
+        function editComment(inquiryId, commentId) {
+            const displayContent = document.getElementById(`commentContentDisplay-${commentId}`);
+            const editContentArea = document.getElementById(`editCommentContent-${commentId}`);
+            const editArea = document.getElementById(`editCommentArea-${commentId}`);
+
+            editContentArea.value = displayContent.textContent;
+            displayContent.style.display = 'none';
+            editArea.style.display = 'block'; 
+        }
+
+        // 📌 댓글 수정 취소 함수 (기존과 동일)
+        function cancelEdit(commentId) {
+            const displayContent = document.getElementById(`commentContentDisplay-${commentId}`);
+            const editArea = document.getElementById(`editCommentArea-${commentId}`);
+
+            editArea.style.display = 'none';
+            displayContent.style.display = 'block';
+        }
+
+        // 📌 댓글 수정 내용 저장 함수 (기존과 동일)
+        async function saveComment(inquiryId, commentId, currentPage) {
+            const updatedContent = document.getElementById(`editCommentContent-${commentId}`).value.trim();
+
+            if (!updatedContent) {
+                alert('댓글 내용을 입력해주세요.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${window.location.origin}/customer/inquiries/${inquiryId}/comments/${commentId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ content: updatedContent })
+                });
+
+                if (response.ok) {
+                    alert('댓글이 성공적으로 수정되었습니다.');
+                    document.getElementById(`commentContentDisplay-${commentId}`).textContent = updatedContent;
+                    cancelEdit(commentId);
+                    fetchComments(inquiryId, currentPage);
+                } else {
+                    const errorData = await response.json().catch(() => response.text());
+                    alert('댓글 수정 실패: ' + (errorData.message || errorData || '알 수 없는 오류'));
+                    console.error('댓글 수정 실패:', response.status, errorData);
+                }
+            } catch (error) {
+                console.error('댓글 수정 중 네트워크 오류:', error);
+                alert('네트워크 오류 또는 서버 문제로 댓글 수정에 실패했습니다.');
+            }
+        }
+
+        // 댓글 등록 (기존과 동일)
+        async function submitComment(inquiryId) {
+            const commentInput = document.getElementById(`commentInput-${inquiryId}`);
+            const content = commentInput.value.trim();
+            const author = "관리자";
+
+            if (!content) {
+                alert('댓글 내용을 입력해주세요.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${window.location.origin}/customer/inquiries/${inquiryId}/comments`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ author, content })
+                });
+
+                if (response.ok) {
+                    commentInput.value = '';
+                    fetchComments(inquiryId, 1);
+                } else {
+                    const errorData = await response.json().catch(() => response.text());
+                    alert('댓글 등록 실패: ' + (errorData.message || errorData || '알 수 없는 오류'));
+                    console.error('댓글 등록 실패:', response.status, errorData);
+                }
+            } catch (error) {
+                console.error('댓글 등록 중 오류:', error);
+                alert('네트워크 오류 또는 서버 문제로 댓글 등록에 실패했습니다.');
+            }
+        }
+
+        // 댓글 삭제 (기존과 동일)
+        async function deleteComment(inquiryId, commentId, currentPage) {
+            if (!confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
+                return;
+            }
+            try {
+                const response = await fetch(`${window.location.origin}/customer/inquiries/${inquiryId}/comments/${commentId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert('댓글이 성공적으로 삭제되었습니다.');
+                    fetchComments(inquiryId, currentPage);
+                } else {
+                    const errorData = await response.json().catch(() => response.text());
+                    alert('댓글 삭제 실패: ' + (errorData.message || errorData || '알 수 없는 오류'));
+                    console.error('댓글 삭제 실패:', response.status, errorData);
+                }
+            } catch (error) {
+                console.error('댓글 삭제 중 오류:', error);
+                alert('네트워크 오류 또는 서버 문제로 댓글 삭제에 실패했습니다.');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchInquiries);
+    </script>
+</body>
+
+</html>

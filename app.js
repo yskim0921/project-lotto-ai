@@ -5,6 +5,8 @@ const session = require('express-session');
 const { connectDB } = require('./db'); // MongoDB 연결
 const app = express();
 const temp2Router = require('./routes/temp2');
+
+
 // ===== MongoDB 연결 =====
 // let db;
 (async () => {
@@ -41,6 +43,7 @@ const temp1Router = require('./routes/temp1');
 const mind_num_matRouter = require('./routes/mind_num_mat');
 const aiSecRouter = require('./routes/aiSec');
 const signin_upRouter = require('./routes/signin_up');
+const customerRouter = require('./routes/customer');
 
 app.use('/product', productRouter);
 app.use('/lotto', lottoRouter);
@@ -49,5 +52,8 @@ app.use('/temp2', temp2Router);
 app.use('/mind_num_mat', mind_num_matRouter);
 app.use('/aiSec', aiSecRouter);
 app.use('/signin_up', signin_upRouter);
+app.use('/customer', customerRouter);
+
+
 
 module.exports = app;
