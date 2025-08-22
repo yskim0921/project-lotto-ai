@@ -11,9 +11,26 @@
 /* 감정 박스 그리드 */
 #emotion-container {
     display: grid;
-    grid-template-columns: repeat(6, 1fr); /* 컬럼 수 필요시 조정 */
+    grid-template-columns: repeat(6, 1fr); /* 최대 6개 컬럼 */
     gap: 25px;
     margin-top: 50px;
+}
+
+/* 반응형: 화면이 좁으면 컬럼 수 줄이기 */
+@media (max-width: 1200px) {
+    #emotion-container {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+@media (max-width: 800px) {
+    #emotion-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 500px) {
+    #emotion-container {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* 감정 박스 */
@@ -25,8 +42,8 @@
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
-    width: 400px;   /* 가로 길이 고정 */
-    height: 230px;  /* 세로 길이 고정 */
+    /* width: 100%;   가로 길이 고정 */
+    height: 250px;  /* 세로 길이 고정 */
     overflow: hidden;
 
     /* 글씨 중앙 정렬 */
@@ -47,7 +64,7 @@
 /* 감정 제목 */
 .emotion-title {
     font-weight: bold;
-    font-size: 1.2em;
+    font-size: 2em;  /* 글씨 확대 */
 }
 
 /* 숫자+상징 정보 숨기기 */
@@ -88,14 +105,8 @@
     margin-right: 5px;
 }
 
-/* 감정 제목 글씨 키우기 */
-.emotion-title {
-    font-weight: bold;
-    font-size: 2em;  /* 기존 1.2em에서 2em으로 확대 */
-}
-
-.ball-yellow { background-color: yellow; color: #333; }
-.ball-blue { background-color: blue; }
-.ball-red { background-color: red; }
-.ball-gray { background-color: gray; }
-.ball-green { background-color: green; }
+.ball-yellow { background-color: #FBC400; color: #333; }
+.ball-blue { background-color: #69C8F2; }
+.ball-red { background-color: #FF7272; }
+.ball-gray { background-color: #aaa; }
+.ball-green { background-color: #B0D840; }
