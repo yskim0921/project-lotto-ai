@@ -78,7 +78,9 @@
                         </small>
                         <div>
                             <a class="btn btn-sm btn-primary me-2" href="/product/<%= p._id %>">상세보기</a>
+                            <% if (session && session.user) { %>
                             <button class="btn btn-sm btn-danger" onclick="deleteReview('<%= p._id %>')">삭제</button>
+                            <% } %>
                         </div>
                     </div>
                 </div>

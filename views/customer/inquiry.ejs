@@ -231,18 +231,22 @@
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <h5 class="inquiry-title" id="inquiryTitleDisplay-${inquiry._id}">${escapeHTML(inquiry.title)}</h5>
                         <div class="form-check">
+                            <% if (session && session.user) { %>
                             <input class="form-check-input" type="checkbox" id="resolvedCheck-${inquiry._id}" 
                                 ${inquiry.resolved ? 'checked' : ''} 
                                 onclick="toggleResolved('${inquiry._id}', this.checked)">
                             <label class="form-check-label" for="resolvedCheck-${inquiry._id}">
                                 해결됨
                             </label>
+                            <% } %>
                         </div>
                     </div>
                     <div class="inquiry-meta">
                         작성자: <strong id="inquiryAuthorDisplay-${inquiry._id}">${escapeHTML(inquiry.author)}</strong> | 등록일: ${new Date(inquiry.createdAt).toLocaleString()}
+                        <% if (session && session.user) { %>
                         <button class="btn btn-sm btn-danger float-end ms-2" onclick="deleteInquiry('${inquiry._id}')">삭제</button>
                         <button class="btn btn-sm btn-warning float-end" onclick="toggleInquiryEditMode('${inquiry._id}')">수정</button> <!-- 📌 문의글 수정 버튼 추가 -->
+                        <% } %>
                     </div>
                     <p class="inquiry-content" id="inquiryContentDisplay-${inquiry._id}">${escapeHTML(inquiry.content)}</p>
 
@@ -268,6 +272,7 @@
                     </div>
 
                     <!-- 댓글 섹션 -->
+                    
                     <div class="comment-section">
                         <h6><span id="commentCountDisplay-${inquiry._id}"></span></h6>
                         <ul id="commentList-${inquiry._id}" class="comment-list">
@@ -281,8 +286,10 @@
                             </ul>
                         </nav>
                         <div class="input-group mt-1">
+                         <% if (session && session.user) { %>
                             <input type="text" class="form-control form-control-sm" id="commentInput-${inquiry._id}" placeholder="관리자 답글..." required>
                             <button class="btn btn-outline-secondary btn-sm" type="button" onclick="submitComment('${inquiry._id}')">등록</button>
+                            <% } %>
                         </div>
                     </div>
                 `;
