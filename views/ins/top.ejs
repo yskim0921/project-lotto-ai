@@ -15,7 +15,12 @@
             <a href="/customer" class="w3-bar-item w3-button">고객센터</a>
         </div>
         <h5>
-            <a href="/signin_up">로그인 & 회원 가입</a> |
+            <% if (session && session.user) { %>
+            <a href="#" id="logoutLink" >
+                관리자모드</a>
+            <% } else { %>
+                <a href="/signin_up">관리자로그인</a>
+            <% } %>
         </h5>
     </div>
 </div>
@@ -27,3 +32,25 @@
         <!-- <h1 class="w3-xxlarge">Le Catering</h1> -->
     </div>
 </header>
+<!-- Logout Script -->
+<script>
+  const logoutLink = document.getElementById('logoutLink');
+  if (logoutLink) {
+    logoutLink.addEventListener('click', async (e) => {
+      e.preventDefault();
+      if (confirm('로그아웃 하시겠습니까?')) {
+        try {
+          const res = await fetch('/signin_up/logout', { method: 'GET' });
+          if (res.ok) {
+            location.reload(); // 현재 페이지 새로고침
+          } else {
+            alert('로그아웃 실패');
+          }
+        } catch (err) {
+          console.error(err);
+          alert('로그아웃 에러');
+        }
+      }
+    });
+  }
+</script>

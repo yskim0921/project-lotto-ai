@@ -4,11 +4,10 @@ const path = require('path');
 const session = require('express-session');
 const { connectDB } = require('./db'); // MongoDB 연결
 const app = express();
-const temp2Router = require('./routes/temp2');
 
 
 // ===== MongoDB 연결 =====
-// let db;
+let db;
 (async () => {
   db = await connectDB();
 })();
@@ -22,12 +21,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/upload', express.static(path.join(__dirname, 'public', 'upload', 'product')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-app.use(express.urlencoded({ extended: true }));
-app.use('/temp2', temp2Router);
-app.use(express.json()); // JSON body 처리 (:경고: 필수)
+
 // ===== Session =====
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.json()); // JSON body 처리 (:경고: 필수)
 app.use(
   session({
     secret: 'secret-for-shop-admin',
@@ -36,14 +33,21 @@ app.use(
     cookie: { maxAge: 1000 * 60 * 10 },
   })
 );
+//관리자 로그인
+app.use((req, res, next) => {
+  res.locals.session = req.session;
+  next();
+});
 // ===== Router 등록 =====
 const productRouter = require('./routes/products');
 const lottoRouter = require('./routes/lotto');
 const temp1Router = require('./routes/temp1');
+const temp2Router = require('./routes/temp2');
 const mind_num_matRouter = require('./routes/mind_num_mat');
 const aiSecRouter = require('./routes/aiSec');
 const signin_upRouter = require('./routes/signin_up');
 const customerRouter = require('./routes/customer');
+const topRouter =require('./routes/top')
 
 app.use('/product', productRouter);
 app.use('/lotto', lottoRouter);
@@ -53,7 +57,13 @@ app.use('/mind_num_mat', mind_num_matRouter);
 app.use('/aiSec', aiSecRouter);
 app.use('/signin_up', signin_upRouter);
 app.use('/customer', customerRouter);
+app.use('/', topRouter)
 
-
-
+// ===== 권한 체크 미들웨어 예시 (삭제 기능용) =====
+function checkAdmin(req, res, next) {
+  if (req.session.user && req.session.user.role === 'admin') {
+    return next();
+  }
+  res.status(403).send('권한이 없습니다.');
+}
 module.exports = app;
