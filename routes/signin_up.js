@@ -60,10 +60,10 @@ router.get('/', (req, res) => {
 // ================================
 router.post('/signin', async (req, res) => {
   const db = req.db;  // MongoDB 접근
-  const { email, password } = req.body; // 로그인 폼에서 전달된 이메일/비밀번호
+  const { username, password } = req.body; // 로그인 폼에서 전달된 이메일/비밀번호
 
   // 필수 입력값 검증
-  if (!email || !password) {
+  if (!username || !password) {
     return res.status(400).json({ error: "이메일과 비밀번호를 입력하세요." });
   }
 
@@ -71,16 +71,16 @@ router.post('/signin', async (req, res) => {
     const users = db.collection("users");
 
     // 이메일과 비밀번호 일치 여부 확인
-    const user = await users.findOne({ email, password });
+    const user = await users.findOne({ username, password });
     if (!user) {
-      return res.status(401).json({ error: "이메일 또는 비밀번호가 올바르지 않습니다." });
+      return res.status(401).json({ error: "아이디 또는 비밀번호가 올바르지 않습니다." });
     }
 
     // 로그인 성공 시 세션에 사용자 정보 저장
     req.session.user = {
       id: user._id,
       username: user.username,
-      email: user.email,
+      // email: user.email,
     };
 
     console.log("로그인 후 세션:", req.session);
