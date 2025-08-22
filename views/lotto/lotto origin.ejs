@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>로또 분석</title>
+</head>
+<body>
+    <h2>로또번호 분석</h2>
+    <input type="text" id="name" placeholder="이름"><br>
+    <input type="text" id="gender" placeholder="성별 (남성/여성)"><br>
+    <input type="number" id="year" placeholder="출생년도"><br>
+    <input type="number" id="month" placeholder="출생월"><br>
+    <input type="number" id="day" placeholder="출생일"><br>
+    <input type="text" id="calendar" placeholder="양력/음력"><br>
+    <input type="text" id="dream" placeholder="오늘의 꿈"><br>
+    <button onclick="sendData()">분석하기</button>
+
+    <pre id="result" style="background:#f1f3f5; padding:10px; border-radius:6px;"></pre>
+
+    <script>
+        function sendData() {
+            let data = {
+                name: document.getElementById("name").value.trim(),
+                gender: document.getElementById("gender").value.trim(),
+                year: document.getElementById("year").value.trim(),
+                month: document.getElementById("month").value.trim(),
+                day: document.getElementById("day").value.trim(),
+                calendar: document.getElementById("calendar").value.trim(),
+                dream: document.getElementById("dream").value.trim()
+            };
+
+            fetch("/lotto/analysis", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("result").innerText = JSON.stringify(data, null, 2);
+            })
+            .catch(err => {
+                document.getElementById("result").innerText = "서버 오류";
+                console.error(err);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -21,7 +21,7 @@ router.post('/analysis', (req, res) => {
   const _calendar = calendar || "양력";
   const _dream = dream || "하늘에서 용이 내려와서 여의주를 주고 갔다.";
 
-  const pythonPath = path.join(__dirname, '../best_model/script.py');
+  const pythonPath = path.join(__dirname, '../best_model/main.py');
 
   const python = spawn('python3', [
     pythonPath,
