@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>로또 분석</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .input-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .input-group {
+            margin-bottom: 10px;
+        }
+        input {
+            width: 200px;
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .results-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .section-title {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .lotto-numbers {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+        .lotto-ball {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .ball-1-10 { background: #ffc107; color: #000; }
+        .ball-11-20 { background: #007bff; }
+        .ball-21-30 { background: #dc3545; }
+        .ball-31-40 { background: #6c757d; }
+        .ball-41-45 { background: #28a745; }
+        .emotion-bar {
+            background: #e9ecef;
+            border-radius: 4px;
+            height: 20px;
+            overflow: hidden;
+            margin: 2px 0;
+        }
+        .emotion-fill {
+            background: linear-gradient(to right, #007bff, #0056b3);
+            height: 100%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .dream-analysis {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h2>로또번호 분석</h2>
+    
+    <div class="input-section">
+        <div class="input-group">
+            <input type="text" id="name" placeholder="이름">
+            <input type="text" id="gender" placeholder="성별 (남성/여성)">
+            <input type="number" id="year" placeholder="출생년도">
+        </div>
+        <div class="input-group">
+            <input type="number" id="month" placeholder="출생월">
+            <input type="number" id="day" placeholder="출생일">
+            <input type="text" id="calendar" placeholder="양력/음력">
+        </div>
+        <div class="input-group">
+            <input type="text" id="dream" placeholder="오늘의 꿈" style="width: 400px;">
+        </div>
+        <button onclick="sendData()">분석하기</button>
+    </div>
+
+    <div id="results" class="hidden">
+        <!-- 기본 정보 -->
+        <div class="results-section">
+            <h3 class="section-title">기본 정보</h3>
+            <table>
+                <tr><th>이름</th><td id="result-name"></td></tr>
+                <tr><th>성별</th><td id="result-gender"></td></tr>
+                <tr><th>생년월일</th><td id="result-birth"></td></tr>
+                <tr><th>꿈 내용</th><td id="result-dream"></td></tr>
+            </table>
+        </div>
+
+        <!-- 꿈 분석 -->
+        <div class="results-section">
+            <h3 class="section-title">꿈 분석</h3>
+            <div class="dream-analysis" id="dream-analysis"></div>
+        </div>
+
+        <!-- 오늘의 운세 -->
+        <div class="results-section">
+            <h3 class="section-title">오늘의 운세</h3>
+            <table>
+                <tr><th>날짜</th><td id="today-date"></td></tr>
+                <tr><th>총운</th><td id="general-luck"></td></tr>
+                <tr><th>상세 운세</th><td id="detailed-luck"></td></tr>
+            </table>
+        </div>
+
+        <!-- 감정 분석 -->
+        <div class="results-section">
+            <h3 class="section-title">오늘의 감정 분석</h3>
+            <div id="today-emotions"></div>
+        </div>
+
+        <div class="results-section">
+            <h3 class="section-title">꿈에서의 감정 분석</h3>
+            <div id="dream-emotions"></div>
+        </div>
+
+        <!-- 로또 번호 결과 -->
+        <div class="results-section">
+            <h3 class="section-title">추천 로또 번호</h3>
+            <div id="lotto-results"></div>
+        </div>
+
+        <!-- 숫자 의미 -->
+        <div class="results-section">
+            <h3 class="section-title">오늘 감정별 숫자 의미</h3>
+            <div id="today-number-meanings"></div>
+        </div>
+
+        <div class="results-section">
+            <h3 class="section-title">꿈 감정별 숫자 의미</h3>
+            <div id="dream-number-meanings"></div>
+        </div>
+    </div>
+
+    <script>
+        function sendData() {
+            let data = {
+                name: document.getElementById("name").value.trim(),
+                gender: document.getElementById("gender").value.trim(),
+                year: document.getElementById("year").value.trim(),
+                month: document.getElementById("month").value.trim(),
+                day: document.getElementById("day").value.trim(),
+                calendar: document.getElementById("calendar").value.trim(),
+                dream: document.getElementById("dream").value.trim()
+            };
+
+            // 실제 서버 호출 대신 샘플 데이터로 테스트
+            displayResults(getSampleData());
+
+            /*
+            fetch("/lotto/analysis", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(data => {
+                displayResults(data);
+            })
+            .catch(err => {
+                alert("서버 오류가 발생했습니다.");
+                console.error(err);
+            });
+            */
+        }
+
+        function displayResults(data) {
+            document.getElementById("results").classList.remove("hidden");
+            
+            // 기본 정보 표시
+            document.getElementById("result-name").textContent = data.name;
+            document.getElementById("result-gender").textContent = data.gender;
+            document.getElementById("result-birth").textContent = `${data.year}년 ${data.month}월 ${data.day}일 (${data.calendar})`;
+            document.getElementById("result-dream").textContent = data.dream;
+
+            // 꿈 분석 표시
+            document.getElementById("dream-analysis").textContent = data.dream_analysis;
+
+            // 오늘의 운세 표시
+            if (data.today_analysis) {
+                document.getElementById("today-date").textContent = data.today_analysis.today;
+                document.getElementById("general-luck").textContent = data.today_analysis.generalLuck;
+                document.getElementById("detailed-luck").textContent = data.today_analysis.lucky;
+            }
+
+            // 감정 분석 표시
+            displayEmotions("today-emotions", data.emotion_list.today_emotion);
+            displayEmotions("dream-emotions", data.emotion_list.dream_emotion);
+
+            // 로또 번호 결과 표시
+            displayLottoResults(data.number_info);
+
+            // 숫자 의미 표시
+            displayNumberMeanings("today-number-meanings", data.number_info.today_number_meanings);
+            displayNumberMeanings("dream-number-meanings", data.number_info.dream_number_meanings);
+        }
+
+        function displayEmotions(containerId, emotions) {
+            const container = document.getElementById(containerId);
+            let html = '<table><tr><th>감정</th><th>확률</th><th>확률 바</th></tr>';
+            
+            emotions.forEach(emotion => {
+                const percentage = (emotion.probability * 100).toFixed(2);
+                html += `
+                    <tr>
+                        <td>${emotion.label}</td>
+                        <td>${percentage}%</td>
+                        <td>
+                            <div class="emotion-bar">
+                                <div class="emotion-fill" style="width: ${percentage}%">${percentage}%</div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += '</table>';
+            container.innerHTML = html;
+        }
+
+        function displayLottoResults(numberInfo) {
+            const container = document.getElementById("lotto-results");
+            let html = '<table><tr><th>회차</th><th>오늘 감정 기반</th><th>꿈 감정 기반</th><th>중복</th><th>최종 추천 번호</th></tr>';
+            
+            for (let i = 1; i <= 4; i++) {
+                const roundKey = `${i}회차`;
+                const round = numberInfo[roundKey];
+                
+                html += `
+                    <tr>
+                        <td>${i}회차</td>
+                        <td>${createLottoBalls(round.number_today_random)}</td>
+                        <td>${createLottoBalls(round.number_dream_random)}</td>
+                        <td>${createLottoBalls(round.number_duplicates)}</td>
+                        <td>${createLottoBalls(round.final_results)}</td>
+                    </tr>
+                `;
+            }
+            
+            html += '</table>';
+            container.innerHTML = html;
+        }
+
+        function createLottoBalls(numbers) {
+            if (!numbers || numbers.length === 0) return '-';
+            
+            return numbers.map(num => {
+                let ballClass = '';
+                if (num <= 10) ballClass = 'ball-1-10';
+                else if (num <= 20) ballClass = 'ball-11-20';
+                else if (num <= 30) ballClass = 'ball-21-30';
+                else if (num <= 40) ballClass = 'ball-31-40';
+                else ballClass = 'ball-41-45';
+                
+                return `<span class="lotto-ball ${ballClass}">${num}</span>`;
+            }).join('');
+        }
+
+        function displayNumberMeanings(containerId, meanings) {
+            const container = document.getElementById(containerId);
+            let html = '';
+            
+            Object.keys(meanings).forEach(emotion => {
+                html += `<h4>${emotion}</h4>`;
+                html += '<table><tr><th>숫자</th><th>연관 감정</th><th>상징 의미</th></tr>';
+                
+                meanings[emotion].forEach(item => {
+                    html += `
+                        <tr>
+                            <td><span class="lotto-ball ${getLottoBallClass(item.숫자)}">${item.숫자}</span></td>
+                            <td>${item.감정}</td>
+                            <td>${item.상징}</td>
+                        </tr>
+                    `;
+                });
+                
+                html += '</table><br>';
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function getLottoBallClass(num) {
+            if (num <= 10) return 'ball-1-10';
+            else if (num <= 20) return 'ball-11-20';
+            else if (num <= 30) return 'ball-21-30';
+            else if (num <= 40) return 'ball-31-40';
+            else return 'ball-41-45';
+        }
+
+        // 테스트용 샘플 데이터
+        function getSampleData() {
+            return {
+                "name": "김윤성",
+                "gender": "남성",
+                "year": "1983",
+                "month": "09",
+                "day": "21",
+                "calendar": "양력",
+                "dream": "용나오는 꿈",
+                "dream_analysis": "용이 나오는 꿈은 매우 강렬하고 상징적인 꿈 중 하나입니다. 용은 동양 문화, 특히 한국과 같은 곳에서 신비롭고 긍정적인 힘, 권위, 성공, 그리고 변화의 상징으로 여겨집니다. 이런 꿈을 꾸셨다는 것은 내면의 변화를 준비하고 있거나, 곧 중요한 전환점에 서 있음을 암시할 수 있습니다.",
+                "today_analysis": {
+                    "today": "2025.08.22",
+                    "generalLuck": "운세의 총운은 일단전진 입니다",
+                    "lucky": "전반적으로 볼 때 그리 나쁘거나 손해를 볼 경우는 없는 날이 되겠습니다. 긍정적인 생각이 나쁜 기운을 뿌리쳐 줍니다."
+                },
+                "emotion_list": {
+                    "today_emotion": [
+                        {"label": "느긋", "probability": 0.9931989312171936},
+                        {"label": "기쁨", "probability": 0.0021260592620819807},
+                        {"label": "안도", "probability": 0.0014421922387555242}
+                    ],
+                    "dream_emotion": [
+                        {"label": "신뢰하는", "probability": 0.642615556716919},
+                        {"label": "걱정스러운", "probability": 0.27648818492889404},
+                        {"label": "조심스러운", "probability": 0.021588735282421112}
+                    ]
+                },
+                "number_info": {
+                    "1회차": {
+                        "number_today_random": [11, 21, 20, 29, 22, 28],
+                        "number_dream_random": [7, 12, 45, 22, 32, 44],
+                        "number_duplicates": [22],
+                        "final_results": [22, 32, 29, 44, 28, 11]
+                    },
+                    "2회차": {
+                        "number_today_random": [11, 33, 20, 29, 22, 7],
+                        "number_dream_random": [7, 31, 12, 32, 22, 14],
+                        "number_duplicates": [22, 7],
+                        "final_results": [22, 7, 32, 29, 11, 31]
+                    },
+                    "today_number_meanings": {
+                        "느긋": [
+                            {"숫자": 11, "감정": "감사하는", "상징": " 균형과 평온을 상징해 마음이 안정되고 감사할 때 느낌과 맞습니다."},
+                            {"숫자": 24, "감정": "느긋", "상징": " 내면의 안정과 감정을 잘 다스리는 상태를 의미합니다."}
+                        ]
+                    },
+                    "dream_number_meanings": {
+                        "신뢰하는": [
+                            {"숫자": 7, "감정": "감사하는", "상징": " 행운과 긍정을 뜻하는 숫자라 '감사'의 따뜻한 마음과 어울립니다."},
+                            {"숫자": 28, "감정": "감사하는", "상징": " 신뢰와 안정의 의미가 있어 '감사하는' 마음의 든든함을 표현합니다."}
+                        ]
+                    }
+                }
+            };
+        }
+    </script>
+</body>
+</html>

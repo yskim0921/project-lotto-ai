@@ -1,214 +1,642 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>로또번호 분석 페이지</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- W3.CSS 적용 -->
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
-    <link rel="stylesheet" href="public\css\style.css">
+    <meta charset="UTF-8">
+    <title>로또 분석</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
-            background: #f8f9fa;
+            font-family: 'Noto Sans KR', sans-serif;
             padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #ffeaa7 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
         }
 
-        .container {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        h1 {
+        h2 {
             text-align: center;
             margin-bottom: 30px;
-            font-size: 24px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-size: 2.5em;
+            font-weight: 700;
+            letter-spacing: 2px;
         }
 
-        .input-group {
+        .input-container {
+            max-width: 600px;
+            margin: 0 auto 30px;
+            background: rgba(255,255,255,0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
             margin-bottom: 15px;
         }
 
-        .input-group label {
-            width: 100px;
-            display: inline-block;
+        input, select, textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: 'Noto Sans KR', sans-serif;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.9);
         }
 
-        .input-group input {
-            width: calc(100% - 110px);
-            padding: 6px 8px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
         }
 
         button {
             width: 100%;
-            padding: 10px;
-            border: none;
-            background: #4caf50;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: #fff;
-            border-radius: 6px;
-            font-size: 14px;
+            font-weight: 600;
+            font-size: 18px;
+            border: none;
+            border-radius: 15px;
             cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Noto Sans KR', sans-serif;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
         button:hover {
-            background: #45a049;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #5a6fd8, #6a4190);
         }
 
-        .loading {
-            display: none;
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        #result-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .card h3 {
+            margin-bottom: 20px;
+            color: #667eea;
+            font-size: 1.5em;
+            font-weight: 600;
             text-align: center;
-            margin: 15px 0;
+            position: relative;
+        }
+
+        .card h3::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        .card h4 {
             color: #555;
+            margin: 20px 0 10px 0;
+            font-weight: 500;
         }
 
-        .result-section {
-            margin-top: 20px;
-            display: none;
-        }
-
-        .result-box {
-            background: #f1f3f5;
-            padding: 15px;
-            border-radius: 6px;
-            border-left: 4px solid #4caf50;
-        }
-
-        .error {
-            background: #ffe3e3;
-            color: #c62828;
-            padding: 10px;
-            border-radius: 6px;
-        }
-
-        .back-link {
+        /* 로또공 스타일 */
+        .lotto-ball {
             display: inline-block;
-            margin-bottom: 15px;
-            color: #4caf50;
-            text-decoration: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            margin: 5px;
+            font-weight: 700;
+            font-size: 16px;
+            text-align: center;
+            line-height: 45px;
+            color: white;
+            box-shadow: 
+                inset 2px 2px 4px rgba(255,255,255,0.3),
+                inset -2px -2px 4px rgba(0,0,0,0.2),
+                0 4px 8px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .back-link:hover {
-            text-decoration: underline;
+        .lotto-ball::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 8px;
+            height: 8px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 50%;
+            box-shadow: 0 0 4px rgba(255,255,255,0.8);
+        }
+
+        .lotto-ball:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 
+                inset 2px 2px 4px rgba(255,255,255,0.3),
+                inset -2px -2px 4px rgba(0,0,0,0.2),
+                0 8px 16px rgba(0,0,0,0.3);
+        }
+
+        /* 로또공 색상 */
+        .ball-1-10 { background: linear-gradient(135deg, #ff6b6b, #ee5a52); }
+        .ball-11-20 { background: linear-gradient(135deg, #4ecdc4, #44a08d); }
+        .ball-21-30 { background: linear-gradient(135deg, #45b7d1, #96c93d); }
+        .ball-31-40 { background: linear-gradient(135deg, #f9ca24, #f0932b); }
+        .ball-41-45 { background: linear-gradient(135deg, #6c5ce7, #a29bfe); }
+
+        .number-chip {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 14px;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .number-chip:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        .dream-text {
+            background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+            padding: 20px;
+            border-radius: 15px;
+            font-style: italic;
+            margin-bottom: 20px;
+            border-left: 5px solid #fdcb6e;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .fortune-text {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e3f2fd;
+        }
+
+        .lotto-section {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .lotto-section h3 {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .lotto-section h3::after {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .number-group {
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        .number-group strong {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #ffeaa7;
+        }
+
+        .meaning-section {
+            background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .meaning-section h3 {
+            color: #d63031;
+        }
+
+        .meaning-section h3::after {
+            background: #d63031;
+        }
+
+        .emotion-meaning {
+            background: rgba(255,255,255,0.8);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .debug-section {
+            background: #2d3436;
+            color: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .debug-section h3 {
+            color: #74b9ff;
+        }
+
+        .debug-section h3::after {
+            background: #74b9ff;
+        }
+
+        @media (max-width: 768px) {
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .lotto-ball {
+                width: 40px;
+                height: 40px;
+                line-height: 40px;
+                font-size: 14px;
+            }
+            
+            h2 {
+                font-size: 2em;
+            }
         }
     </style>
 </head>
-
 <body>
-
-    <!-- 상단 include -->
-    <%- include('../ins/top') %>
-
-    <div class="container">
-        <a href="/" class="back-link">← 이전으로 돌아가기</a>
-        <h1>로또번호 분석 페이지</h1>
-
-        <div class="input-group">
-            <label for="gender">성별:</label>
-            <input type="text" id="gender" value="남성" />
+    <h2>🍀 AI 로또번호 분석</h2>
+    
+    <div class="input-container">
+        <div class="input-row">
+            <input type="text" id="name" placeholder="이름">
+            <input type="text" id="gender" placeholder="성별 (남성/여성)">
         </div>
-
-        <div class="input-group">
-            <label for="calendar">달력:</label>
-            <input type="text" id="calendar" value="양력" />
+        <div class="input-row">
+            <input type="number" id="year" placeholder="출생년도">
+            <input type="number" id="month" placeholder="출생월">
         </div>
-
-        <div class="input-group">
-            <label for="year">출생년도:</label>
-            <input type="number" id="year" value="1990" />
+        <div class="input-row">
+            <input type="number" id="day" placeholder="출생일">
+            <input type="text" id="calendar" placeholder="양력/음력">
         </div>
-
-        <div class="input-group">
-            <label for="month">출생월:</label>
-            <input type="number" id="month" value="3" />
-        </div>
-
-        <div class="input-group">
-            <label for="day">출생일:</label>
-            <input type="number" id="day" value="15" />
-        </div>
-
-        <div class="input-group">
-            <label for="dream">오늘의 꿈:</label>
-            <input type="text" id="dream" value="돼지가 우리집으로 날아들어왔어요" />
-        </div>
-
-        <button onclick="sendData()">운세 & 로또번호 분석하기</button>
-
-        <div class="loading" id="loading">분석 중입니다...</div>
-
-        <div id="resultSection" class="result-section">
-            <h3>분석 결과</h3>
-            <div id="results" class="result-box"></div>
-        </div>
-
-        <div id="errorsSection" class="result-section">
-            <div id="errors" class="error"></div>
-        </div>
+        <textarea id="dream" placeholder="오늘의 꿈을 자세히 적어주세요..."></textarea>
+        <button onclick="sendData()">🔮 분석하기</button>
     </div>
 
-    <!-- bottom include -->
-    <%- include('../ins/bottom') %>
+    <div id="result-container"></div>
 
     <script>
         function sendData() {
-            const gender = document.getElementById("gender").value.trim();
-            const calendar = document.getElementById("calendar").value.trim();
-            const year = document.getElementById("year").value.trim();
-            const month = document.getElementById("month").value.trim();
-            const day = document.getElementById("day").value.trim();
-            const dream = document.getElementById("dream").value.trim();
+            const data = {
+                name: document.getElementById("name").value.trim(),
+                gender: document.getElementById("gender").value.trim(),
+                year: document.getElementById("year").value.trim(),
+                month: document.getElementById("month").value.trim(),
+                day: document.getElementById("day").value.trim(),
+                calendar: document.getElementById("calendar").value.trim(),
+                dream: document.getElementById("dream").value.trim()
+            };
 
-            document.getElementById("loading").style.display = "block";
-            document.getElementById("resultSection").style.display = "none";
-            document.getElementById("errorsSection").style.display = "none";
-            document.getElementById("errors").innerHTML = "";
-
-            fetch("/lotto/calc", {
+            fetch("/lotto/analysis", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ gender, calendar, year, month, day, dream })
+                body: JSON.stringify(data)
             })
-                .then(res => res.json())
-                .then(data => {
-                    document.getElementById("loading").style.display = "none";
-                    if (data.error) {
-                        displayError("서버 오류: " + data.error);
-                        return;
-                    }
-                    displayResults(data);
-                })
-                .catch(err => {
-                    document.getElementById("loading").style.display = "none";
-                    displayError("네트워크 오류가 발생했습니다.");
-                });
+            .then(res => res.json())
+            .then(data => {
+                showResult(data);
+            })
+            .catch(err => {
+                document.getElementById("result-container").innerHTML = "<p>서버 오류가 발생했습니다.</p>";
+                console.error(err);
+            });
         }
 
-        function displayResults(data) {
-            const resultBox = document.getElementById("results");
-            resultBox.innerHTML = `
-                <p><strong>성별:</strong> ${data.gender}</p>
-                <p><strong>달력:</strong> ${data.calendar}</p>
-                <p><strong>생년월일:</strong> ${data.year}-${data.month}-${data.day}</p>
-                <p><strong>꿈:</strong> ${data.dream}</p>
-                <hr>
-                <p>${data.message || ''}</p>
+        // 로또공 스타일 함수
+        function getLottoBallClass(num) {
+            if (num >= 1 && num <= 10) return 'ball-1-10';
+            if (num >= 11 && num <= 20) return 'ball-11-20';
+            if (num >= 21 && num <= 30) return 'ball-21-30';
+            if (num >= 31 && num <= 40) return 'ball-31-40';
+            if (num >= 41 && num <= 45) return 'ball-41-45';
+            return 'ball-1-10';
+        }
+
+        function showResult(data) {
+            const container = document.getElementById("result-container");
+            container.innerHTML = "";
+            
+            // 디버깅을 위한 콘솔 로그
+            console.log("전체 데이터:", data);
+            console.log("1회차 데이터:", data['1회차']);
+            console.log("2회차 데이터:", data['2회차']);
+
+            // 기본 정보
+            const basicCard = document.createElement("div");
+            basicCard.className = "card";
+            basicCard.innerHTML = `
+                <h3>👤 기본 정보</h3>
+                이름: ${data.name || 'N/A'} <br>
+                성별: ${data.gender || 'N/A'} <br>
+                생년월일: ${data.year || 'N/A'}년 ${data.month || 'N/A'}월 ${data.day || 'N/A'}일 <br>
+                달력: ${data.calendar || 'N/A'}
             `;
-            document.getElementById("resultSection").style.display = "block";
-        }
+            container.appendChild(basicCard);
 
-        function displayError(msg) {
-            document.getElementById("errors").innerText = msg;
-            document.getElementById("errorsSection").style.display = "block";
+            // 꿈 내용
+            const dreamCard = document.createElement("div");
+            dreamCard.className = "card";
+            dreamCard.innerHTML = `
+                <h3>🌙 꿈 내용</h3>
+                <div class="dream-text">${data.dream || 'N/A'}</div>
+                <h4>꿈 해석:</h4>
+                <div>${data.dream_analysis ? data.dream_analysis.replace(/\n/g,'<br>') : '꿈 해석을 불러올 수 없습니다.'}</div>
+            `;
+            container.appendChild(dreamCard);
+
+            // 오늘의 운세
+            if(data.today_analysis) {
+                const fortuneCard = document.createElement("div");
+                fortuneCard.className = "card";
+                fortuneCard.innerHTML = `
+                    <h3>🍀 오늘의 운세 (${data.today_analysis.today || 'N/A'})</h3>
+                    <div class="fortune-text">
+                        <strong>총운:</strong> ${data.today_analysis.generalLuck || 'N/A'} <br><br>
+                        ${data.today_analysis.lucky || 'N/A'}
+                    </div>
+                `;
+                container.appendChild(fortuneCard);
+            }
+
+            // 감정 분석
+            if(data.emotion_list) {
+                const emotionCard = document.createElement("div");
+                emotionCard.className = "card";
+                emotionCard.innerHTML = `
+                    <h3>🌅 감정 분석</h3>
+                    <h4>오늘의 감정:</h4>
+                    <table>
+                        <tr><th>감정</th><th>확률</th></tr>
+                        ${data.emotion_list.today_emotion ? data.emotion_list.today_emotion.map(emotion => 
+                            `<tr><td>${emotion.label}</td><td>${(emotion.probability * 100).toFixed(1)}%</td></tr>`
+                        ).join('') : '<tr><td colspan="2">데이터가 없습니다.</td></tr>'}
+                    </table>
+                    <h4>꿈에서의 감정:</h4>
+                    <table>
+                        <tr><th>감정</th><th>확률</th></tr>
+                        ${data.emotion_list.dream_emotion ? data.emotion_list.dream_emotion.map(emotion => 
+                            `<tr><td>${emotion.label}</td><td>${(emotion.probability * 100).toFixed(1)}%</td></tr>`
+                        ).join('') : '<tr><td colspan="2">데이터가 없습니다.</td></tr>'}
+                    </table>
+                `;
+                container.appendChild(emotionCard);
+            }
+
+            // 숫자별 의미 (회차 위에 표시)
+            if(data.number_info && data.number_info.today_number_meanings && data.number_info.dream_number_meanings) {
+                const meaningCard = document.createElement("div");
+                meaningCard.className = "card meaning-section";
+                meaningCard.innerHTML = `<h3>🔢 숫자별 의미</h3>`;
+                
+                // 오늘 운세 기반 숫자 의미
+                meaningCard.innerHTML += `<h4>📊 오늘 운세 기반 숫자 의미:</h4>`;
+                Object.keys(data.number_info.today_number_meanings).forEach(emotion => {
+                    meaningCard.innerHTML += `<div class="emotion-meaning">`;
+                    meaningCard.innerHTML += `<strong>${emotion}:</strong><br>`;
+                    if (Array.isArray(data.number_info.today_number_meanings[emotion])) {
+                        data.number_info.today_number_meanings[emotion].forEach(item => {
+                            meaningCard.innerHTML += `<span class="lotto-ball ${getLottoBallClass(item.숫자)}">${item.숫자}</span> ${item.상징}<br>`;
+                        });
+                    }
+                    meaningCard.innerHTML += `</div>`;
+                });
+                
+                // 꿈 해석 기반 숫자 의미
+                meaningCard.innerHTML += `<h4>🌙 꿈 해석 기반 숫자 의미:</h4>`;
+                Object.keys(data.number_info.dream_number_meanings).forEach(emotion => {
+                    meaningCard.innerHTML += `<div class="emotion-meaning">`;
+                    meaningCard.innerHTML += `<strong>${emotion}:</strong><br>`;
+                    if (Array.isArray(data.number_info.dream_number_meanings[emotion])) {
+                        data.number_info.dream_number_meanings[emotion].forEach(item => {
+                            meaningCard.innerHTML += `<span class="lotto-ball ${getLottoBallClass(item.숫자)}">${item.숫자}</span> ${item.상징}<br>`;
+                        });
+                    }
+                    meaningCard.innerHTML += `</div>`;
+                });
+                
+                container.appendChild(meaningCard);
+            }
+
+            // 행운 숫자 (lotto_result 구조 - count별)
+            console.log("로또 결과 데이터 확인:");
+            console.log("전체 데이터:", data);
+            console.log("전체 데이터 키:", Object.keys(data));
+            console.log("number_info 데이터:", data.number_info);
+            console.log("lotto_result 데이터:", data.number_info?.lotto_result);
+            console.log("lotto_result 타입:", typeof data.number_info?.lotto_result);
+            
+            // lotto_result가 있는지 확인 (number_info 안에 있음)
+            if (data.number_info && data.number_info.lotto_result && typeof data.number_info.lotto_result === 'object') {
+                console.log("lotto_result 키들:", Object.keys(data.number_info.lotto_result));
+                
+                // lotto_result 내부의 모든 키를 확인 (count_1, count_2 등)
+                const resultKeys = Object.keys(data.number_info.lotto_result);
+                console.log("결과 키들:", resultKeys);
+                
+                if (resultKeys.length > 0) {
+                    // count 번호로 정렬 (count_1, count_2, count_3 순서)
+                    const sortedKeys = resultKeys.sort((a, b) => {
+                        const aNum = parseInt(a.replace('count_', ''));
+                        const bNum = parseInt(b.replace('count_', ''));
+                        return aNum - bNum;
+                    });
+                    
+                    console.log("정렬된 키들:", sortedKeys);
+                    
+                    // 각 결과 키에 대해 카드 생성
+                    sortedKeys.forEach(resultKey => {
+                        const resultData = data.number_info.lotto_result[resultKey];
+                        console.log(`${resultKey} 데이터:`, resultData);
+                        console.log(`${resultKey} number_today_random:`, resultData?.number_today_random);
+                        console.log(`${resultKey} number_dream_random:`, resultData?.number_dream_random);
+                        console.log(`${resultKey} number_duplicates:`, resultData?.number_duplicates);
+                        console.log(`${resultKey} final_results:`, resultData?.final_results);
+                        
+                        if (resultData && typeof resultData === 'object') {
+                            const roundCard = document.createElement("div");
+                            roundCard.className = "card";
+                            
+                            // count 번호 추출하여 표시용 텍스트 생성
+                            const countNum = resultKey.replace('count_', '');
+                            const displayText = `${countNum}회차`;
+                            
+
+                            
+                            // 안전한 배열 처리 (로또공 스타일)
+                            const todayNumbers = resultData.number_today_random && Array.isArray(resultData.number_today_random) ? 
+                                resultData.number_today_random.map(n => `<span class="lotto-ball ${getLottoBallClass(n)}">${n}</span>`).join(' ') : '데이터 없음';
+                            
+                            const dreamNumbers = resultData.number_dream_random && Array.isArray(resultData.number_dream_random) ? 
+                                resultData.number_dream_random.map(n => `<span class="lotto-ball ${getLottoBallClass(n)}">${n}</span>`).join(' ') : '데이터 없음';
+                            
+                            const duplicateNumbers = resultData.number_duplicates && Array.isArray(resultData.number_duplicates) && resultData.number_duplicates.length > 0 ? 
+                                resultData.number_duplicates.map(n => `<span class="lotto-ball ${getLottoBallClass(n)}">${n}</span>`).join(' ') : '없음';
+                            
+                            const finalNumbers = resultData.final_results && Array.isArray(resultData.final_results) ? 
+                                resultData.final_results.map(n => `<span class="lotto-ball ${getLottoBallClass(n)}">${n}</span>`).join(' ') : '데이터 없음';
+                            
+                            roundCard.className = "card lotto-section";
+                            roundCard.innerHTML = `
+                                <h3>🎲 ${displayText}</h3>
+                                <div class="number-group">
+                                    <strong>오늘 운세 숫자:</strong>
+                                    <div>${todayNumbers}</div>
+                                </div>
+                                <div class="number-group">
+                                    <strong>꿈 해석 숫자:</strong>
+                                    <div>${dreamNumbers}</div>
+                                </div>
+                                <div class="number-group">
+                                    <strong>중복 숫자:</strong>
+                                    <div>${duplicateNumbers}</div>
+                                </div>
+                                <div class="number-group">
+                                    <strong>최종 결과:</strong>
+                                    <div>${finalNumbers}</div>
+                                </div>
+                            `;
+                            
+                            container.appendChild(roundCard);
+                            console.log(`${resultKey} 카드 생성됨`);
+                        } else {
+                            console.log(`${resultKey}: 유효하지 않은 데이터`);
+                        }
+                    });
+                } else {
+                    console.log("lotto_result에 키가 없습니다.");
+                    const noDataCard = document.createElement("div");
+                    noDataCard.className = "card";
+                    noDataCard.innerHTML = `
+                        <h3>🎲 로또 번호</h3>
+                        <p>lotto_result에 데이터가 없습니다.</p>
+                    `;
+                    container.appendChild(noDataCard);
+                }
+            } else {
+                console.log("lotto_result가 없거나 객체가 아닙니다.");
+                // lotto_result가 없으면 메시지 표시
+                const noDataCard = document.createElement("div");
+                noDataCard.className = "card";
+                noDataCard.innerHTML = `
+                    <h3>🎲 로또 번호</h3>
+                    <p>로또 번호 데이터가 없습니다.</p>
+                `;
+                container.appendChild(noDataCard);
+            }
+            
+            // 디버깅 정보 표시
+            const debugCard = document.createElement("div");
+            debugCard.className = "card debug-section";
+            debugCard.innerHTML = `
+                <h3>🔍 디버깅 정보</h3>
+                <p><strong>전체 데이터 키:</strong> ${Object.keys(data).join(', ')}</p>
+                <p><strong>number_info 존재:</strong> ${data.number_info ? '있음' : '없음'}</p>
+                <p><strong>lotto_result 존재:</strong> ${data.number_info?.lotto_result ? '있음' : '없음'}</p>
+                <p><strong>lotto_result 타입:</strong> ${typeof data.number_info?.lotto_result}</p>
+                <p><strong>lotto_result 키들:</strong> ${data.number_info?.lotto_result && typeof data.number_info.lotto_result === 'object' ? Object.keys(data.number_info.lotto_result).join(', ') : '없음'}</p>
+                <p><strong>count_1 데이터:</strong> ${data.number_info?.lotto_result && data.number_info.lotto_result['count_1'] ? JSON.stringify(data.number_info.lotto_result['count_1']) : '없음'}</p>
+                <p><strong>count_1 number_today_random:</strong> ${data.number_info?.lotto_result && data.number_info.lotto_result['count_1'] && data.number_info.lotto_result['count_1'].number_today_random ? JSON.stringify(data.number_info.lotto_result['count_1'].number_today_random) : '없음'}</p>
+            `;
+            container.appendChild(debugCard);
         }
     </script>
 </body>
-
 </html>

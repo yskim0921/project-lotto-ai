@@ -189,4 +189,39 @@ router.delete('/:reviewId/comments/:commentId', async (req, res) => {
     }
 });
 
+router.put('/:reviewId/comments/:commentId', async (req, res) => {
+    try {
+        const { reviewId, commentId } = req.params;
+        const { content } = req.body; // 수정할 댓글 내용
+
+        // ID 유효성 검사
+        if (!ObjectId.isValid(reviewId) || !ObjectId.isValid(commentId)) {
+            return res.status(400).json({ message: '유효하지 않은 ID입니다.' });
+        }
+        // 내용 유효성 검사
+        if (!content || content.trim() === '') {
+            return res.status(400).json({ message: '댓글 내용을 입력해주세요.' });
+        }
+
+        // MongoDB의 'comments' 컬렉션에서 해당 댓글 업데이트
+        const result = await req.db.collection('comments').updateOne(
+            { 
+                _id: new ObjectId(commentId),
+                reviewId: new ObjectId(reviewId) // 해당 후기의 댓글인지 확인하는 조건
+            },
+            { $set: { content: content.trim(), updatedAt: new Date() } } // 내용 및 수정 시간 업데이트
+        );
+
+        // 업데이트된 문서가 없는 경우 (댓글을 찾지 못했거나 이미 삭제된 경우)
+        if (result.matchedCount === 0) {
+            return res.status(404).json({ message: '댓글을 찾을 수 없거나 권한이 없습니다.' });
+        }
+        
+        // 성공 응답
+        res.status(200).json({ message: '댓글이 성공적으로 수정되었습니다.' });
+    } catch (error) {
+        console.error('댓글 수정 실패:', error);
+        res.status(500).json({ message: '댓글 수정에 실패했습니다.', error: error.message });
+    }
+});
 module.exports = router;

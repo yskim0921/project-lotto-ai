@@ -1,26 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-        <!-- W3.CSS 적용 -->
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
-    <!-- 공통 CSS -->
-    <link rel="stylesheet" href="public\css\style.css">
-    <!-- mind_num_mat 전용 CSS -->
-    <link rel="stylesheet" href="public\css\mind_num_mat.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>감정 숫자 분류표</title>
+    <link rel="stylesheet" href="/css/mind_num_mat.css" />
 </head>
 <body>
-  <!-- 상단 include -->
-  <%- include('../ins/top') %>
+    <%- include('../ins/top') %>
 
-      <h1>감정 숫자 분류표</h1>
-    <!-- 드롭박스 include -->
-    <%- include('mind_num_mat/emotion_dropdown') %>
-   
-
-    <!-- bottom include -->
+    <div class="main-content">
+        <h1>감정 숫자 분류표</h1>
+        <div id="emotion-container">
+            <% matching_emotion_number.forEach(emotion => { %>
+                <div class="emotion-box">
+                    <span class="emotion-title"><%= emotion.감정 %></span>
+                    <div class="number-info">
+                        <% emotion.데이터.forEach(item => { %>
+                            <p class="number-item"><strong><%= item.숫자 %></strong> : <%= item.상징 %></p>
+                        <% }) %>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+    
     <%- include('../ins/bottom') %>
+
+    <script src="/js/mind_num_mat.js"></script>
 </body>
 </html>

@@ -1,0 +1,112 @@
+/* 전체 콘텐츠 세로 중앙 */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: calc(100vh - 100px);
+    text-align: center;
+}
+
+/* 감정 박스 그리드 */
+#emotion-container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr); /* 최대 6개 컬럼 */
+    gap: 25px;
+    margin-top: 50px;
+}
+
+/* 반응형: 화면이 좁으면 컬럼 수 줄이기 */
+@media (max-width: 1200px) {
+    #emotion-container {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+@media (max-width: 800px) {
+    #emotion-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 500px) {
+    #emotion-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 감정 박스 */
+.emotion-box {
+    background-color: #f7f7f7;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    /* width: 100%;   가로 길이 고정 */
+    height: 250px;  /* 세로 길이 고정 */
+    overflow: hidden;
+
+    /* 글씨 중앙 정렬 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+/* 호버 스타일 */
+.emotion-box:hover {
+    background-color: #e0e0e0;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+/* 감정 제목 */
+.emotion-title {
+    font-weight: bold;
+    font-size: 2em;  /* 글씨 확대 */
+}
+
+/* 숫자+상징 정보 숨기기 */
+.number-info {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+    text-align: left;
+    background: rgba(255,255,255,0.95);
+    overflow-y: auto;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* 호버 시 보이기 */
+.emotion-box:hover .number-info {
+    opacity: 1;
+}
+
+/* 각 숫자 아이템 */
+.number-item {
+    margin: 5px 0;
+}
+
+/* 로또볼 스타일 */
+.ball {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 50%;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    margin-right: 5px;
+}
+
+.ball-yellow { background-color: #FBC400; color: #333; }
+.ball-blue { background-color: #69C8F2; }
+.ball-red { background-color: #FF7272; }
+.ball-gray { background-color: #aaa; }
+.ball-green { background-color: #B0D840; }

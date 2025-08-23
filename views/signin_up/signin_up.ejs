@@ -5,53 +5,74 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sign In & Sign Up</title>
 
-  <!-- 공통 CSS -->
-  <link rel="stylesheet" href="/css/reset.css">
-  <link rel="stylesheet" href="/css/style.css">
+  <!-- 공통 CSS: 모든 페이지에 적용될 CSS -->
+  <link rel="stylesheet" href="/css/reset.css"> <!-- 브라우저 기본 스타일 초기화 -->
+  <link rel="stylesheet" href="/css/style.css"> <!-- 공통 레이아웃 및 스타일 -->
 
-  <!-- 전용 CSS (필요하다면 signinup.css 따로 생성 가능) -->
-  <link rel="stylesheet" href="/css/signin_up.css">
+  <!-- 전용 CSS: signin_up 전용 스타일 -->
+  <link rel="stylesheet" href="/css/signin_up.css"> <!-- 필요 시 별도 스타일 적용 -->
 
 </head>
 <body>
 
   <div class="container right-panel-active">
-    <!-- Sign Up -->
-    <div class="container__form container--signup">
-      <form action="/signin_up/signup" method="POST" class="form" id="form1">
-        <h2 class="form__title">Sign Up</h2>
-        <input type="text" name="username" placeholder="User" class="input" required />
-        <input type="email" name="email" placeholder="Email" class="input" required />
-        <input type="password" name="password" placeholder="Password" class="input" required />
-        <button type="submit" class="btn">Sign Up</button>
-      </form>
-    </div>
+    <!-- ===========================
+         회원가입 폼 (Sign Up)
+         =========================== -->
+    <!-- <div class="container__form container--signup">
+      <form id="form1" class="form"
+            action="/signin_up/signup" method="POST"> -->
+        <!-- action, method 추가: 서버 라우터와 연결 -->
+        <!-- <h2 class="form__title">Sign Up</h2> -->
 
-    <!-- Sign In -->
+        <!-- username 필드: 회원가입 시 필요 -->
+        <!-- <input type="text" name="username" placeholder="User" class="input" required /> -->
+        <!-- email 필드: 로그인/중복 체크용 -->
+        <!-- <input type="email" name="email" placeholder="Email" class="input" required /> -->
+        <!-- password 필드: 로그인/인증용 -->
+        <!-- <input type="password" name="password" placeholder="Password" class="input" required /> -->
+        <!-- 제출 버튼 -->
+        <!-- <button type="submit" class="btn">Sign Up</button>
+      </form>
+    </div> -->
+
+    <!-- ===========================
+         로그인 폼 (Sign In)
+         =========================== -->
     <div class="container__form container--signin">
-      <form action="/signin_up/signin" method="POST" class="form" id="form2">
+      <form id="form2" class="form"
+            action="/signin_up/signin" method="POST">
+        <!-- action, method 추가: 서버 라우터와 연결 -->
         <h2 class="form__title">Sign In</h2>
-        <input type="email" name="email" placeholder="Email" class="input" required />
+        <!-- 로그인 시 이메일 사용 -->
+        <input type="text" name="username" placeholder="ID" class="input" required />
+        <!-- 로그인 시 패스워드 사용 -->
         <input type="password" name="password" placeholder="Password" class="input" required />
+        <!-- 비밀번호 찾기 링크 -->
         <a href="#" class="link">Forgot your password?</a>
         <button type="submit" class="btn">Sign In</button>
       </form>
     </div>
 
-    <!-- Overlay -->
+    <!-- ===========================
+         Overlay (좌우 전환 버튼)
+         =========================== -->
     <div class="container__overlay">
       <div class="overlay">
-        <div class="overlay__panel overlay--left">
+        <!-- 왼쪽 패널: 로그인 폼 보여주기 -->
+        <div class="overlay__panel overlay--right">
           <button class="btn" id="signIn">Sign In</button>
         </div>
-        <div class="overlay__panel overlay--right">
+        <!-- 오른쪽 패널: 회원가입 폼 보여주기 -->
+        <!-- <div class="overlay__panel overlay--right">
           <button class="btn" id="signUp">Sign Up</button>
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 
-    <!-- JavaScript 파일 연결 -->
-  <script src="/js/signin_up.js"></script>
+  <!-- JavaScript 파일 연결 -->
+  <script src="/js/signin_up.js"></script> 
+  <!-- signin_up.js: 버튼 클릭 시 Sign In/Sign Up 폼 전환 기능 -->
 </body>
 </html>
