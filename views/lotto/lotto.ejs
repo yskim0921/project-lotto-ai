@@ -603,18 +603,18 @@
                             const countNum = resultKey.replace('count_', '');
                             const displayText = `${countNum}회차`;
                             
-                            // 안전한 배열 처리 (로또공 스타일)
-                            const todayNumbers = resultData.number_today_random && Array.isArray(resultData.number_today_random) ? 
-                                resultData.number_today_random.map(n => `<span class="lotto-ball ${getLottoBallClass(n)}">${n}</span>`).join(' ') : '데이터 없음';
-                            
-                            const dreamNumbers = resultData.number_dream_random && Array.isArray(resultData.number_dream_random) ? 
-                                resultData.number_dream_random.map(n => `<span class="lotto-ball ${getLottoBallClass(n)}">${n}</span>`).join(' ') : '데이터 없음';
-                            
-                            const duplicateNumbers = resultData.number_duplicates && Array.isArray(resultData.number_duplicates) && resultData.number_duplicates.length > 0 ? 
-                                resultData.number_duplicates.map(n => `<span class="lotto-ball ${getLottoBallClass(n)}">${n}</span>`).join(' ') : '없음';
-                            
-                            const finalNumbers = resultData.final_results && Array.isArray(resultData.final_results) ? 
-                                resultData.final_results.map(n => `<span class="lotto-ball ${getLottoBallClass(n)}">${n}</span>`).join(' ') : '데이터 없음';
+                                                         // 안전한 배열 처리 (로또공 스타일) - 오름차순 정렬
+                             const todayNumbers = resultData.number_today_random && Array.isArray(resultData.number_today_random) ? 
+                                 resultData.number_today_random.sort((a, b) => a - b).map(n => `<span class="lotto-ball ${getLottoBallClass(n)}">${n}</span>`).join(' ') : '데이터 없음';
+                             
+                             const dreamNumbers = resultData.number_dream_random && Array.isArray(resultData.number_dream_random) ? 
+                                 resultData.number_dream_random.sort((a, b) => a - b).map(n => `<span class="lotto-ball ${getLottoBallClass(n)}">${n}</span>`).join(' ') : '데이터 없음';
+                             
+                             const duplicateNumbers = resultData.number_duplicates && Array.isArray(resultData.number_duplicates) && resultData.number_duplicates.length > 0 ? 
+                                 resultData.number_duplicates.sort((a, b) => a - b).map(n => `<span class="lotto-ball ${getLottoBallClass(n)}">${n}</span>`).join(' ') : '없음';
+                             
+                             const finalNumbers = resultData.final_results && Array.isArray(resultData.final_results) ? 
+                                 resultData.final_results.sort((a, b) => a - b).map(n => `<span class="lotto-ball ${getLottoBallClass(n)}">${n}</span>`).join(' ') : '데이터 없음';
                             
                             const roundCard = document.createElement("div");
                             roundCard.className = "card lotto-section";
