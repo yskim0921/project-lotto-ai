@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { ObjectId } = require('mongodb');
+const { checkAdmin } = require('../middleware/auth');
 
 // GET: 고객센터 페이지 렌더링
 router.get('/', (req, res) => {
@@ -79,8 +80,8 @@ router.put('/inquiries/:id/resolve', async (req, res) => {
     }
 });
 
-// DELETE: 불만사항/제안 삭제 (관련 댓글도 함께 삭제)
-router.delete('/inquiries/:id', async (req, res) => {
+// DELETE: 불만사항/제안 삭제 (관련 댓글도 함께 삭제) - 관리자 권한 필요
+router.delete('/inquiries/:id', checkAdmin, async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -169,8 +170,8 @@ router.post('/inquiries/:inquiryId/comments', async (req, res) => {
     }
 });
 
-// DELETE: 특정 댓글 삭제
-router.delete('/inquiries/:inquiryId/comments/:commentId', async (req, res) => {
+// DELETE: 특정 댓글 삭제 - 관리자 권한 필요
+router.delete('/inquiries/:inquiryId/comments/:commentId', checkAdmin, async (req, res) => {
     try {
         const { inquiryId, commentId } = req.params;
 
