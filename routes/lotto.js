@@ -12,7 +12,7 @@ router.get('/', (req, res) => {
 router.post('/analysis', (req, res) => {
   const { name, gender, year, month, day, calendar, dream } = req.body;
 
-  const pythonPath = path.join(__dirname, '../script_origin.py');
+  const pythonPath = path.join(__dirname, '../best_model/script.py');
   const pythonCommand = process.platform === 'win32' ? 'python' : 'python3';
   
   const python = spawn(pythonCommand, [

@@ -410,10 +410,6 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data)
             })
-            .then(res => res.json())
-            .then(data => {
-                showResult(data);
-            })
             .then(res => {
                 if (!res.ok) {
                     return res.json().then(errorData => {
@@ -460,20 +456,17 @@
             const container = document.getElementById("result-container");
             container.innerHTML = "";
             
-            // 디버깅을 위한 콘솔 로그
-            console.log("전체 데이터:", data);
-            console.log("1회차 데이터:", data['1회차']);
-            console.log("2회차 데이터:", data['2회차']);
-
             // 기본 정보
             const basicCard = document.createElement("div");
             basicCard.className = "card";
             basicCard.innerHTML = `
                 <h3>👤 기본 정보</h3>
-                이름: ${data.name || 'N/A'} <br>
-                성별: ${data.gender || 'N/A'} <br>
-                생년월일: ${data.year || 'N/A'}년 ${data.month || 'N/A'}월 ${data.day || 'N/A'}일 <br>
-                달력: ${data.calendar || 'N/A'}
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div><strong>이름:</strong> ${data.name || 'N/A'}</div>
+                    <div><strong>성별:</strong> ${data.gender || 'N/A'}</div>
+                    <div><strong>생년월일:</strong> ${data.year || 'N/A'}년 ${data.month || 'N/A'}월 ${data.day || 'N/A'}일</div>
+                    <div><strong>달력:</strong> ${data.calendar || 'N/A'}</div>
+                </div>
             `;
             container.appendChild(basicCard);
 
@@ -484,7 +477,7 @@
                 <h3>🌙 꿈 내용</h3>
                 <div class="dream-text">${data.dream || 'N/A'}</div>
                 <h4>꿈 해석:</h4>
-                <div>${data.dream_analysis ? data.dream_analysis.replace(/\n/g,'<br>') : '꿈 해석을 불러올 수 없습니다.'}</div>
+                <div style="line-height: 1.8; text-align: justify;">${data.dream_analysis ? data.dream_analysis.replace(/\n/g,'<br>') : '꿈 해석을 불러올 수 없습니다.'}</div>
             `;
             container.appendChild(dreamCard);
 
@@ -495,8 +488,8 @@
                 fortuneCard.innerHTML = `
                     <h3>🍀 오늘의 운세 (${data.today_analysis.today || 'N/A'})</h3>
                     <div class="fortune-text">
-                        <strong>총운:</strong> ${data.today_analysis.generalLuck || 'N/A'} <br><br>
-                        ${data.today_analysis.lucky || 'N/A'}
+                        <div style="margin-bottom: 15px;"><strong>총운:</strong> ${data.today_analysis.generalLuck || 'N/A'}</div>
+                        <div style="line-height: 1.8; text-align: justify;">${data.today_analysis.lucky || 'N/A'}</div>
                     </div>
                 `;
                 container.appendChild(fortuneCard);
@@ -508,25 +501,31 @@
                 emotionCard.className = "card";
                 emotionCard.innerHTML = `
                     <h3>🌅 감정 분석</h3>
-                    <h4>오늘의 감정:</h4>
-                    <table>
-                        <tr><th>감정</th><th>확률</th></tr>
-                        ${data.emotion_list.today_emotion ? data.emotion_list.today_emotion.map(emotion => 
-                            `<tr><td>${emotion.label}</td><td>${(emotion.probability * 100).toFixed(1)}%</td></tr>`
-                        ).join('') : '<tr><td colspan="2">데이터가 없습니다.</td></tr>'}
-                    </table>
-                    <h4>꿈에서의 감정:</h4>
-                    <table>
-                        <tr><th>감정</th><th>확률</th></tr>
-                        ${data.emotion_list.dream_emotion ? data.emotion_list.dream_emotion.map(emotion => 
-                            `<tr><td>${emotion.label}</td><td>${(emotion.probability * 100).toFixed(1)}%</td></tr>`
-                        ).join('') : '<tr><td colspan="2">데이터가 없습니다.</td></tr>'}
-                    </table>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <h4>오늘의 감정:</h4>
+                            <table>
+                                <tr><th>감정</th><th>확률</th></tr>
+                                ${data.emotion_list.today_emotion ? data.emotion_list.today_emotion.map(emotion => 
+                                    `<tr><td>${emotion.label}</td><td>${(emotion.probability * 100).toFixed(1)}%</td></tr>`
+                                ).join('') : '<tr><td colspan="2">데이터가 없습니다.</td></tr>'}
+                            </table>
+                        </div>
+                        <div>
+                            <h4>꿈에서의 감정:</h4>
+                            <table>
+                                <tr><th>감정</th><th>확률</th></tr>
+                                ${data.emotion_list.dream_emotion ? data.emotion_list.dream_emotion.map(emotion => 
+                                    `<tr><td>${emotion.label}</td><td>${(emotion.probability * 100).toFixed(1)}%</td></tr>`
+                                ).join('') : '<tr><td colspan="2">데이터가 없습니다.</td></tr>'}
+                            </table>
+                        </div>
+                    </div>
                 `;
                 container.appendChild(emotionCard);
             }
 
-            // 숫자별 의미 (회차 위에 표시)
+            // 숫자별 의미
             if(data.number_info && data.number_info.today_number_meanings && data.number_info.dream_number_meanings) {
                 const meaningCard = document.createElement("div");
                 meaningCard.className = "card meaning-section";
@@ -561,21 +560,9 @@
                 container.appendChild(meaningCard);
             }
 
-            // 행운 숫자 (lotto_result 구조 - count별)
-            console.log("로또 결과 데이터 확인:");
-            console.log("전체 데이터:", data);
-            console.log("전체 데이터 키:", Object.keys(data));
-            console.log("number_info 데이터:", data.number_info);
-            console.log("lotto_result 데이터:", data.number_info?.lotto_result);
-            console.log("lotto_result 타입:", typeof data.number_info?.lotto_result);
-            
-            // lotto_result가 있는지 확인 (number_info 안에 있음)
+            // 로또 번호 결과 (5회차)
             if (data.number_info && data.number_info.lotto_result && typeof data.number_info.lotto_result === 'object') {
-                console.log("lotto_result 키들:", Object.keys(data.number_info.lotto_result));
-                
-                // lotto_result 내부의 모든 키를 확인 (count_1, count_2 등)
                 const resultKeys = Object.keys(data.number_info.lotto_result);
-                console.log("결과 키들:", resultKeys);
                 
                 if (resultKeys.length > 0) {
                     // count 번호로 정렬 (count_1, count_2, count_3 순서)
@@ -585,26 +572,13 @@
                         return aNum - bNum;
                     });
                     
-                    console.log("정렬된 키들:", sortedKeys);
-                    
                     // 각 결과 키에 대해 카드 생성
                     sortedKeys.forEach(resultKey => {
                         const resultData = data.number_info.lotto_result[resultKey];
-                        console.log(`${resultKey} 데이터:`, resultData);
-                        console.log(`${resultKey} number_today_random:`, resultData?.number_today_random);
-                        console.log(`${resultKey} number_dream_random:`, resultData?.number_dream_random);
-                        console.log(`${resultKey} number_duplicates:`, resultData?.number_duplicates);
-                        console.log(`${resultKey} final_results:`, resultData?.final_results);
                         
                         if (resultData && typeof resultData === 'object') {
-                            const roundCard = document.createElement("div");
-                            roundCard.className = "card";
-                            
-                            // count 번호 추출하여 표시용 텍스트 생성
                             const countNum = resultKey.replace('count_', '');
                             const displayText = `${countNum}회차`;
-                            
-
                             
                             // 안전한 배열 처리 (로또공 스타일)
                             const todayNumbers = resultData.number_today_random && Array.isArray(resultData.number_today_random) ? 
@@ -619,6 +593,7 @@
                             const finalNumbers = resultData.final_results && Array.isArray(resultData.final_results) ? 
                                 resultData.final_results.map(n => `<span class="lotto-ball ${getLottoBallClass(n)}">${n}</span>`).join(' ') : '데이터 없음';
                             
+                            const roundCard = document.createElement("div");
                             roundCard.className = "card lotto-section";
                             roundCard.innerHTML = `
                                 <h3>🎲 ${displayText}</h3>
@@ -635,30 +610,24 @@
                                     <div>${duplicateNumbers}</div>
                                 </div>
                                 <div class="number-group">
-                                    <strong>최종 결과:</strong>
-                                    <div>${finalNumbers}</div>
+                                    <strong>🎯 최종 추천 번호:</strong>
+                                    <div style="font-size: 1.2em; font-weight: bold; margin-top: 10px;">${finalNumbers}</div>
                                 </div>
                             `;
                             
                             container.appendChild(roundCard);
-                            console.log(`${resultKey} 카드 생성됨`);
-                        } else {
-                            console.log(`${resultKey}: 유효하지 않은 데이터`);
                         }
                     });
                 } else {
-                    console.log("lotto_result에 키가 없습니다.");
                     const noDataCard = document.createElement("div");
                     noDataCard.className = "card";
                     noDataCard.innerHTML = `
                         <h3>🎲 로또 번호</h3>
-                        <p>lotto_result에 데이터가 없습니다.</p>
+                        <p>로또 번호 데이터가 없습니다.</p>
                     `;
                     container.appendChild(noDataCard);
                 }
             } else {
-                console.log("lotto_result가 없거나 객체가 아닙니다.");
-                // lotto_result가 없으면 메시지 표시
                 const noDataCard = document.createElement("div");
                 noDataCard.className = "card";
                 noDataCard.innerHTML = `
@@ -667,21 +636,6 @@
                 `;
                 container.appendChild(noDataCard);
             }
-            
-            // 디버깅 정보 표시
-            const debugCard = document.createElement("div");
-            debugCard.className = "card debug-section";
-            debugCard.innerHTML = `
-                <h3>🔍 디버깅 정보</h3>
-                <p><strong>전체 데이터 키:</strong> ${Object.keys(data).join(', ')}</p>
-                <p><strong>number_info 존재:</strong> ${data.number_info ? '있음' : '없음'}</p>
-                <p><strong>lotto_result 존재:</strong> ${data.number_info?.lotto_result ? '있음' : '없음'}</p>
-                <p><strong>lotto_result 타입:</strong> ${typeof data.number_info?.lotto_result}</p>
-                <p><strong>lotto_result 키들:</strong> ${data.number_info?.lotto_result && typeof data.number_info.lotto_result === 'object' ? Object.keys(data.number_info.lotto_result).join(', ') : '없음'}</p>
-                <p><strong>count_1 데이터:</strong> ${data.number_info?.lotto_result && data.number_info.lotto_result['count_1'] ? JSON.stringify(data.number_info.lotto_result['count_1']) : '없음'}</p>
-                <p><strong>count_1 number_today_random:</strong> ${data.number_info?.lotto_result && data.number_info.lotto_result['count_1'] && data.number_info.lotto_result['count_1'].number_today_random ? JSON.stringify(data.number_info.lotto_result['count_1'].number_today_random) : '없음'}</p>
-            `;
-            container.appendChild(debugCard);
         }
     </script>
     <%- include('../ins/footer') %>
