@@ -59,7 +59,7 @@ router.get('/logout', (req, res) => {
         if (err) {
             console.error('세션 삭제 오류:', err);
         }
-        res.redirect('/admin/login');
+        res.redirect('/'); // 메인 페이지로 이동
     });
 });
 
