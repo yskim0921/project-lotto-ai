@@ -352,6 +352,7 @@
     </style>
 </head>
 <body>
+    <%- include('../ins/top') %>
     <h2>🍀 AI 로또번호 분석</h2>
     
     <div class="input-container">
@@ -375,6 +376,25 @@
 
     <script>
         function sendData() {
+            // 로딩 상태 표시
+            document.getElementById("result-container").innerHTML = `
+                <div class="card" style="text-align: center; background: rgba(255, 255, 255, 0.95);">
+                    <h3 style="color: #667eea;">🔮 AI 분석 중...</h3>
+                    <p style="color: #666; margin: 20px 0;">잠시만 기다려주세요. AI가 로또 번호를 분석하고 있습니다.</p>
+                    <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                </div>
+            `;
+            
+            // CSS 애니메이션 추가
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            `;
+            document.head.appendChild(style);
+
             const data = {
                 name: document.getElementById("name").value.trim(),
                 gender: document.getElementById("gender").value.trim(),
@@ -394,9 +414,35 @@
             .then(data => {
                 showResult(data);
             })
+            .then(res => {
+                if (!res.ok) {
+                    return res.json().then(errorData => {
+                        throw new Error(errorData.error || '서버 오류가 발생했습니다');
+                    });
+                }
+                return res.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                showResult(data);
+            })
             .catch(err => {
-                document.getElementById("result-container").innerHTML = "<p>서버 오류가 발생했습니다.</p>";
-                console.error(err);
+                console.error('에러:', err);
+                const errorMessage = err.message || '알 수 없는 오류가 발생했습니다';
+                document.getElementById("result-container").innerHTML = `
+                    <div class="card" style="background: rgba(255, 235, 235, 0.95); border-left: 4px solid #f44336;">
+                        <h3 style="color: #f44336;">❌ 오류 발생</h3>
+                        <p style="color: #d32f2f; font-weight: 500;">${errorMessage}</p>
+                        <p style="color: #666; font-size: 14px; margin-top: 10px;">
+                            잠시 후 다시 시도해주시거나, 입력 정보를 확인해주세요.
+                        </p>
+                        <button onclick="location.reload()" style="margin-top: 15px; background: #f44336; width: auto; padding: 10px 20px;">
+                            🔄 다시 시도
+                        </button>
+                    </div>
+                `;
             });
         }
 
@@ -638,5 +684,6 @@
             container.appendChild(debugCard);
         }
     </script>
+    <%- include('../ins/footer') %>
 </body>
 </html>

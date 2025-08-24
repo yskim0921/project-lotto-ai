@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>페이지를 찾을 수 없습니다 - AI 로또 분석</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .error-container {
+            text-align: center;
+            padding: 100px 20px;
+            min-height: 60vh;
+        }
+        .error-code {
+            font-size: 120px;
+            font-weight: bold;
+            color: #f44336;
+            margin-bottom: 20px;
+        }
+        .error-message {
+            font-size: 24px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .error-description {
+            font-size: 16px;
+            color: #888;
+            margin-bottom: 40px;
+        }
+        .home-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .home-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../ins/top') %>
+    
+    <div class="w3-container">
+        <div class="error-container">
+            <div class="error-code">404</div>
+            <div class="error-message">페이지를 찾을 수 없습니다</div>
+            <div class="error-description">
+                요청하신 페이지가 존재하지 않거나 이동되었을 수 있습니다.<br>
+                URL을 다시 확인해주시거나 메인 페이지로 이동해주세요.
+            </div>
+            <a href="/" class="home-button">
+                <i class="fa fa-home"></i> 메인 페이지로 이동
+            </a>
+        </div>
+    </div>
+
+    <%- include('../ins/footer') %>
+</body>
+</html>
