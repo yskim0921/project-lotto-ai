@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
 const { ObjectId } = require('mongodb');
+const { checkAdmin } = require('../middleware/auth');
 
 // ===== Multer 설정 =====
 const uploadDir = path.join(__dirname, '..', 'public', 'upload', 'product');
@@ -94,8 +95,8 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// 후기 삭제 (DELETE 요청 처리)
-router.delete('/:id', async (req, res) => {
+// 후기 삭제 (DELETE 요청 처리) - 관리자 권한 필요
+router.delete('/:id', checkAdmin, async (req, res) => {
     try {
         const { id } = req.params;
         
@@ -163,8 +164,8 @@ router.post('/:reviewId/comments', async (req, res) => {
     }
 });
 
-// 📌 새로운 라우터: 특정 댓글 삭제 (DELETE)
-router.delete('/:reviewId/comments/:commentId', async (req, res) => {
+// 📌 새로운 라우터: 특정 댓글 삭제 (DELETE) - 관리자 권한 필요
+router.delete('/:reviewId/comments/:commentId', checkAdmin, async (req, res) => {
     try {
         const { reviewId, commentId } = req.params; // 후기 ID와 댓글 ID를 모두 받음
 

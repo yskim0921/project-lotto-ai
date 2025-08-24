@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { ObjectId } = require('mongodb');
+const { checkAdmin } = require('../middleware/auth');
 
 // GET: 고객센터 페이지 렌더링
 router.get('/', (req, res) => {
@@ -32,14 +33,26 @@ router.get('/inquiries', async (req, res) => {
 router.post('/inquiries', async (req, res) => {
     try {
         const { author, title, content } = req.body;
+        
+        // 입력값 검증
         if (!author || !title || !content) {
             return res.status(400).json({ message: '작성자, 제목, 내용을 모두 입력해주세요.' });
         }
 
+        // 입력값 길이 제한
+        if (author.length > 50 || title.length > 200 || content.length > 2000) {
+            return res.status(400).json({ message: '입력값이 너무 깁니다.' });
+        }
+
+        // XSS 방지를 위한 입력 정제
+        const sanitizedAuthor = author.replace(/[<>]/g, '').trim();
+        const sanitizedTitle = title.replace(/[<>]/g, '').trim();
+        const sanitizedContent = content.replace(/[<>]/g, '').trim();
+
         const newInquiry = {
-            author: author,
-            title: title,
-            content: content,
+            author: sanitizedAuthor,
+            title: sanitizedTitle,
+            content: sanitizedContent,
             resolved: false, // 초기 상태는 해결되지 않음
             createdAt: new Date()
         };
@@ -79,8 +92,8 @@ router.put('/inquiries/:id/resolve', async (req, res) => {
     }
 });
 
-// DELETE: 불만사항/제안 삭제 (관련 댓글도 함께 삭제)
-router.delete('/inquiries/:id', async (req, res) => {
+// DELETE: 불만사항/제안 삭제 (관련 댓글도 함께 삭제) - 관리자 권한 필요
+router.delete('/inquiries/:id', checkAdmin, async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -169,8 +182,8 @@ router.post('/inquiries/:inquiryId/comments', async (req, res) => {
     }
 });
 
-// DELETE: 특정 댓글 삭제
-router.delete('/inquiries/:inquiryId/comments/:commentId', async (req, res) => {
+// DELETE: 특정 댓글 삭제 - 관리자 권한 필요
+router.delete('/inquiries/:inquiryId/comments/:commentId', checkAdmin, async (req, res) => {
     try {
         const { inquiryId, commentId } = req.params;
 

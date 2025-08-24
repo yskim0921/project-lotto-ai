@@ -3,7 +3,7 @@
 
 <div class="w3-top">
     <div class="w3-bar w3-white w3-padding w3-card" style="letter-spacing:4px;">
-        <a href="/" class="w3-bar-item w3-button">Gourmet au Catering</a>
+        <a href="/" class="w3-bar-item w3-button">AI 로또 분석</a>
         <!-- Right-sided navbar links. Hide them on small screens -->
         <div class="w3-right w3-hide-small">
             <a href="/lotto" class="w3-bar-item w3-button">로또번호분석</a>
@@ -13,15 +13,19 @@
             <a href="/aiSec" class="w3-bar-item w3-button">챗봇AI 상담</a>
             <a href="/product" class="w3-bar-item w3-button">후기게시판</a>
             <a href="/customer" class="w3-bar-item w3-button">고객센터</a>
-        </div>
-        <h5>
-            <% if (session && session.user) { %>
-            <a href="#" id="logoutLink" >
-                관리자모드</a>
+            <% if (session && session.user && session.user.role === 'admin') { %>
+                <span class="w3-bar-item w3-text-theme">
+                    <i class="fa fa-user-secret"></i> <%= session.user.username %>
+                </span>
+                <a href="/admin/logout" class="w3-bar-item w3-button w3-text-red">
+                    <i class="fa fa-sign-out"></i> 로그아웃
+                </a>
             <% } else { %>
-                <a href="/signin_up">관리자로그인</a>
+                <a href="/admin/login" class="w3-bar-item w3-button w3-text-theme">
+                    <i class="fa fa-user-secret"></i> 관리자
+                </a>
             <% } %>
-        </h5>
+        </div>
     </div>
 </div>
 
@@ -32,25 +36,3 @@
         <!-- <h1 class="w3-xxlarge">Le Catering</h1> -->
     </div>
 </header>
-<!-- Logout Script -->
-<script>
-  const logoutLink = document.getElementById('logoutLink');
-  if (logoutLink) {
-    logoutLink.addEventListener('click', async (e) => {
-      e.preventDefault();
-      if (confirm('로그아웃 하시겠습니까?')) {
-        try {
-          const res = await fetch('/signin_up/logout', { method: 'GET' });
-          if (res.ok) {
-            location.reload(); // 현재 페이지 새로고침
-          } else {
-            alert('로그아웃 실패');
-          }
-        } catch (err) {
-          console.error(err);
-          alert('로그아웃 에러');
-        }
-      }
-    });
-  }
-</script>
