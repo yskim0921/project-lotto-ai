@@ -45,9 +45,8 @@ const temp1Router = require('./routes/temp1');
 const temp2Router = require('./routes/temp2');
 const mind_num_matRouter = require('./routes/mind_num_mat');
 const aiSecRouter = require('./routes/aiSec');
-const signin_upRouter = require('./routes/signin_up');
 const customerRouter = require('./routes/customer');
-const topRouter =require('./routes/top')
+const topRouter = require('./routes/top');
 
 app.use('/product', productRouter);
 app.use('/lotto', lottoRouter);
@@ -55,15 +54,27 @@ app.use('/temp1', temp1Router);
 app.use('/temp2', temp2Router);
 app.use('/mind_num_mat', mind_num_matRouter);
 app.use('/aiSec', aiSecRouter);
-app.use('/signin_up', signin_upRouter);
 app.use('/customer', customerRouter);
-app.use('/', topRouter)
+app.use('/', topRouter);
 
 // ===== 권한 체크 미들웨어 예시 (삭제 기능용) =====
 function checkAdmin(req, res, next) {
   if (req.session.user && req.session.user.role === 'admin') {
     return next();
   }
-  res.status(403).send('권한이 없습니다.');
+  res.status(403).render('error/403');
 }
+
+// ===== 에러 핸들러 =====
+// 404 에러 처리
+app.use((req, res, next) => {
+  res.status(404).render('error/404');
+});
+
+// 500 에러 처리
+app.use((err, req, res, next) => {
+  console.error('서버 에러:', err);
+  res.status(500).render('error/500');
+});
+
 module.exports = app;

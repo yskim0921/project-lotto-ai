@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>메인 페이지</title>
+
+<!-- W3.CSS -->
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/css/style.css">
+
+</head>
+<body>
+
+    <%- include('ins/top') %>
+<!-- Main Content -->
+<main class="w3-container" style="margin-top:100px;">
+    <div class="w3-content w3-padding-64">
+        <h1 class="w3-center">AI 로또 분석 시스템</h1>
+        <div class="w3-row-padding w3-center w3-margin-top">
+            <div class="w3-quarter">
+                <div class="w3-card w3-container" style="min-height:150px">
+                    <h3>로또번호분석</h3>
+                    <i class="fa fa-bar-chart w3-margin-bottom w3-text-theme" style="font-size:64px"></i>
+                    <p>AI 기반 로또 번호 분석</p>
+                    <a href="/lotto" class="w3-button w3-theme">분석하기</a>
+                </div>
+            </div>
+            <div class="w3-quarter">
+                <div class="w3-card w3-container" style="min-height:150px">
+                    <h3>이용방법</h3>
+                    <i class="fa fa-info-circle w3-margin-bottom w3-text-theme" style="font-size:64px"></i>
+                    <p>서비스 이용 가이드</p>
+                    <a href="/temp1" class="w3-button w3-theme">보기</a>
+                </div>
+            </div>
+            <div class="w3-quarter">
+                <div class="w3-card w3-container" style="min-height:150px">
+                    <h3>당첨번호</h3>
+                    <i class="fa fa-trophy w3-margin-bottom w3-text-theme" style="font-size:64px"></i>
+                    <p>지난주 당첨번호 확인</p>
+                    <a href="/temp2" class="w3-button w3-theme">확인하기</a>
+                </div>
+            </div>
+            <div class="w3-quarter">
+                <div class="w3-card w3-container" style="min-height:150px">
+                    <h3>AI 상담</h3>
+                    <i class="fa fa-comments w3-margin-bottom w3-text-theme" style="font-size:64px"></i>
+                    <p>챗봇 AI 상담 서비스</p>
+                    <a href="/aiSec" class="w3-button w3-theme">상담하기</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+    <%- include('ins/footer') %>
+</body>
+</html>
