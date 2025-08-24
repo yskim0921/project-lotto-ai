@@ -34,25 +34,10 @@ router.post('/inquiries', async (req, res) => {
     try {
         const { author, title, content } = req.body;
         
-        // 입력값 검증
-        if (!author || !title || !content) {
-            return res.status(400).json({ message: '작성자, 제목, 내용을 모두 입력해주세요.' });
-        }
-
-        // 입력값 길이 제한
-        if (author.length > 50 || title.length > 200 || content.length > 2000) {
-            return res.status(400).json({ message: '입력값이 너무 깁니다.' });
-        }
-
-        // XSS 방지를 위한 입력 정제
-        const sanitizedAuthor = author.replace(/[<>]/g, '').trim();
-        const sanitizedTitle = title.replace(/[<>]/g, '').trim();
-        const sanitizedContent = content.replace(/[<>]/g, '').trim();
-
         const newInquiry = {
-            author: sanitizedAuthor,
-            title: sanitizedTitle,
-            content: sanitizedContent,
+            author,
+            title,
+            content,
             resolved: false, // 초기 상태는 해결되지 않음
             createdAt: new Date()
         };
@@ -101,20 +86,17 @@ router.delete('/inquiries/:id', checkAdmin, async (req, res) => {
             return res.status(400).json({ message: '유효하지 않은 문의 ID입니다.' });
         }
 
-        // 1. 해당 문의사항 삭제
         // 📌 'inquiries' -> 'inquiry'로 변경
-        const inquiryResult = await req.db.collection('inquiry').deleteOne({ _id: new ObjectId(id) });
-        if (inquiryResult.deletedCount === 0) {
-            return res.status(404).json({ message: '문의사항을 찾을 수 없습니다.' });
+        const result = await req.db.collection('inquiry').deleteOne({ _id: new ObjectId(id) });
+
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ message: '문의사항을 찾을 수 없거나 이미 삭제되었습니다.' });
         }
 
-        // 2. 해당 문의사항에 연결된 모든 댓글 삭제 (이 부분은 컬렉션 이름이 'inquiry_comments'로 올바르다면 유지합니다.)
-        await req.db.collection('inquiry_comments').deleteMany({ inquiryId: new ObjectId(id) });
-
-        res.status(200).json({ message: '문의사항 및 관련 댓글이 성공적으로 삭제되었습니다.' });
+        res.status(200).json({ message: '문의사항이 성공적으로 삭제되었습니다.' });
     } catch (error) {
-        console.error('문의사항 삭제 실패:', error);
-        res.status(500).json({ message: '문의사항 삭제에 실패했습니다.', error: error.message }); 
+        console.error('문의사항 삭제 중 오류 발생:', error);
+        res.status(500).json({ message: '서버 오류로 문의사항 삭제에 실패했습니다.', error: error.message });
     }
 });
 
