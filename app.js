@@ -47,6 +47,7 @@ const mind_num_matRouter = require('./routes/mind_num_mat');
 const aiSecRouter = require('./routes/aiSec');
 const customerRouter = require('./routes/customer');
 const topRouter = require('./routes/top');
+const adminRouter = require('./routes/admin');
 
 app.use('/product', productRouter);
 app.use('/lotto', lottoRouter);
@@ -55,15 +56,8 @@ app.use('/temp2', temp2Router);
 app.use('/mind_num_mat', mind_num_matRouter);
 app.use('/aiSec', aiSecRouter);
 app.use('/customer', customerRouter);
+app.use('/admin', adminRouter);
 app.use('/', topRouter);
-
-// ===== 권한 체크 미들웨어 예시 (삭제 기능용) =====
-function checkAdmin(req, res, next) {
-  if (req.session.user && req.session.user.role === 'admin') {
-    return next();
-  }
-  res.status(403).render('error/403');
-}
 
 // ===== 에러 핸들러 =====
 // 404 에러 처리

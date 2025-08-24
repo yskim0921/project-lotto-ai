@@ -13,6 +13,18 @@
             <a href="/aiSec" class="w3-bar-item w3-button">챗봇AI 상담</a>
             <a href="/product" class="w3-bar-item w3-button">후기게시판</a>
             <a href="/customer" class="w3-bar-item w3-button">고객센터</a>
+            <% if (session && session.user && session.user.role === 'admin') { %>
+                <span class="w3-bar-item w3-text-theme">
+                    <i class="fa fa-user-secret"></i> <%= session.user.username %>
+                </span>
+                <a href="/admin/logout" class="w3-bar-item w3-button w3-text-red">
+                    <i class="fa fa-sign-out"></i> 로그아웃
+                </a>
+            <% } else { %>
+                <a href="/admin/login" class="w3-bar-item w3-button w3-text-theme">
+                    <i class="fa fa-user-secret"></i> 관리자
+                </a>
+            <% } %>
         </div>
     </div>
 </div>
