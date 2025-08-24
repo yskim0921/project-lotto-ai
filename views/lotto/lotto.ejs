@@ -2,7 +2,8 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>로또 분석</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 로또번호 분석 - AI 로또 분석</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
         
@@ -14,15 +15,34 @@
         
         body {
             font-family: 'Noto Sans KR', sans-serif;
-            padding: 20px;
+            padding: 0;
+            padding-top: 140px; /* 헤더 높이만큼 상단 여백 추가 */
             background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #ffeaa7 100%);
             min-height: 100vh;
             color: #333;
             line-height: 1.6;
         }
 
+        .main-container {
+            margin-top: 1rem;
+            margin-bottom: 3rem;
+            padding: 0 20px;
+        }
+
+        /* 헤더 가시성 개선 */
+        .w3-top {
+            z-index: 1000;
+        }
+        
+        .w3-bar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
         h2 {
             text-align: center;
+            margin-top: 40px;
             margin-bottom: 30px;
             color: #fff;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
@@ -353,26 +373,29 @@
 </head>
 <body>
     <%- include('../ins/top') %>
-    <h2>🍀 AI 로또번호 분석</h2>
     
-    <div class="input-container">
-        <div class="input-row">
-            <input type="text" id="name" placeholder="이름">
-            <input type="text" id="gender" placeholder="성별 (남성/여성)">
+    <div class="main-container">
+        <h2>🍀 AI 로또번호 분석</h2>
+        
+        <div class="input-container">
+            <div class="input-row">
+                <input type="text" id="name" placeholder="이름">
+                <input type="text" id="gender" placeholder="성별 (남성/여성)">
+            </div>
+            <div class="input-row">
+                <input type="number" id="year" placeholder="출생년도">
+                <input type="number" id="month" placeholder="출생월">
+            </div>
+            <div class="input-row">
+                <input type="number" id="day" placeholder="출생일">
+                <input type="text" id="calendar" placeholder="양력/음력">
+            </div>
+            <textarea id="dream" placeholder="오늘의 꿈을 자세히 적어주세요..."></textarea>
+            <button onclick="sendData()">🔮 분석하기</button>
         </div>
-        <div class="input-row">
-            <input type="number" id="year" placeholder="출생년도">
-            <input type="number" id="month" placeholder="출생월">
-        </div>
-        <div class="input-row">
-            <input type="number" id="day" placeholder="출생일">
-            <input type="text" id="calendar" placeholder="양력/음력">
-        </div>
-        <textarea id="dream" placeholder="오늘의 꿈을 자세히 적어주세요..."></textarea>
-        <button onclick="sendData()">🔮 분석하기</button>
-    </div>
 
-    <div id="result-container"></div>
+        <div id="result-container"></div>
+    </div>
 
     <script>
         function sendData() {

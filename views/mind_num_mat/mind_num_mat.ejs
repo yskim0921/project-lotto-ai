@@ -1,27 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>감정 숫자 분류표</title>
+    <title>감정 숫자 분류표 - AI 로또 분석</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+    <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/mind_num_mat.css" />
+    <style>
+        body {
+            padding-top: 80px; /* 헤더 높이만큼 상단 여백 추가 */
+        }
+        .main-container {
+            margin-top: 2rem;
+            margin-bottom: 3rem;
+        }
+        .main-content {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+        .main-content h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #333;
+        }
+    </style>
 </head>
 <body>
     <%- include('../ins/top') %>
 
-    <div class="main-content">
-        <h1>감정 숫자 분류표</h1>
-        <div id="emotion-container">
-            <% matching_emotion_number.forEach(emotion => { %>
-                <div class="emotion-box">
-                    <span class="emotion-title"><%= emotion.감정 %></span>
-                    <div class="number-info">
-                        <% emotion.데이터.forEach(item => { %>
-                            <p class="number-item"><strong><%= item.숫자 %></strong> : <%= item.상징 %></p>
-                        <% }) %>
+    <div class="w3-container main-container">
+        <div class="main-content">
+            <h1>감정 숫자 분류표</h1>
+            <div id="emotion-container">
+                <% matching_emotion_number.forEach(emotion => { %>
+                    <div class="emotion-box">
+                        <span class="emotion-title"><%= emotion.감정 %></span>
+                        <div class="number-info">
+                            <% emotion.데이터.forEach(item => { %>
+                                <p class="number-item"><strong><%= item.숫자 %></strong> : <%= item.상징 %></p>
+                            <% }) %>
+                        </div>
                     </div>
-                </div>
-            <% }) %>
+                <% }) %>
+            </div>
         </div>
     </div>
     
