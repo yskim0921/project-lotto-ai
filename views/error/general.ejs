@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오류 발생 - AI 로또 분석</title>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .error-container {
+            text-align: center;
+            padding: 100px 20px;
+            min-height: 60vh;
+        }
+        .error-code {
+            font-size: 120px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
+        .error-message {
+            font-size: 24px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .error-description {
+            font-size: 16px;
+            color: #888;
+            margin-bottom: 40px;
+        }
+        .home-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            margin-right: 10px;
+        }
+        .home-button:hover {
+            background-color: #45a049;
+        }
+        .back-button {
+            background-color: #2196F3;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .back-button:hover {
+            background-color: #1976D2;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../ins/top') %>
+    
+    <div class="w3-container">
+        <div class="error-container">
+            <div class="error-code">⚠️</div>
+            <div class="error-message"><%= errorMessage || '오류가 발생했습니다' %></div>
+            <div class="error-description">
+                <%= errorDescription || '예상치 못한 오류가 발생했습니다. 잠시 후 다시 시도해주세요.' %>
+            </div>
+            <div>
+                <a href="/" class="home-button">
+                    <i class="fa fa-home"></i> 메인 페이지로 이동
+                </a>
+                <a href="javascript:history.back()" class="back-button">
+                    <i class="fa fa-arrow-left"></i> 이전 페이지로
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../ins/footer') %>
+</body>
+</html>

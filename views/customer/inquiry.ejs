@@ -12,6 +12,10 @@
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
     <link rel="stylesheet" href="/css/style.css">
     <style>
+        body {
+            padding-top: 80px; /* 헤더 높이만큼 상단 여백 추가 */
+        }
+        
         .inquiry-item {
             background-color: #f8f9fa;
             border: 1px solid #e9ecef;
@@ -93,6 +97,12 @@
             border-radius: 0.5rem;
             border: 1px solid #cceeff;
         }
+        
+        /* 메인 컨테이너 여백 조정 */
+        .main-container {
+            margin-top: 2rem;
+            margin-bottom: 3rem;
+        }
     </style>
 </head>
 
@@ -100,7 +110,7 @@
     <!-- 상단 include -->
     <%- include('../ins/top') %>
 
-    <div class="container w-75 mt-5 mx-auto">
+    <div class="container w-75 mx-auto main-container">
         <!-- 📌 제목과 버튼을 같은 줄에 배치하기 위한 d-flex와 justify-content-between 사용 -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="mb-0">고객센터 - 기능 제안 및 불만사항</h2>
@@ -144,7 +154,7 @@
     </div>
 
     <!-- bottom include -->
-    <%- include('../ins/bottom') %>
+    <%- include('../ins/footer') %>
 
     <script>
         // HTML 이스케이프 함수 (보안을 위해 사용자 입력 내용 표시 전 사용)
@@ -231,7 +241,7 @@
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <h5 class="inquiry-title" id="inquiryTitleDisplay-${inquiry._id}">${escapeHTML(inquiry.title)}</h5>
                         <div class="form-check">
-                            <% if (session && session.user) { %>
+                            <% if (session && session.user && session.user.role === 'admin') { %>
                             <input class="form-check-input" type="checkbox" id="resolvedCheck-${inquiry._id}" 
                                 ${inquiry.resolved ? 'checked' : ''} 
                                 onclick="toggleResolved('${inquiry._id}', this.checked)">
@@ -243,7 +253,7 @@
                     </div>
                     <div class="inquiry-meta">
                         작성자: <strong id="inquiryAuthorDisplay-${inquiry._id}">${escapeHTML(inquiry.author)}</strong> | 등록일: ${new Date(inquiry.createdAt).toLocaleString()}
-                        <% if (session && session.user) { %>
+                        <% if (session && session.user && session.user.role === 'admin') { %>
                         <button class="btn btn-sm btn-danger float-end ms-2" onclick="deleteInquiry('${inquiry._id}')">삭제</button>
                         <button class="btn btn-sm btn-warning float-end" onclick="toggleInquiryEditMode('${inquiry._id}')">수정</button> <!-- 📌 문의글 수정 버튼 추가 -->
                         <% } %>
@@ -286,7 +296,7 @@
                             </ul>
                         </nav>
                         <div class="input-group mt-1">
-                         <% if (session && session.user) { %>
+                         <% if (session && session.user && session.user.role === 'admin') { %>
                             <input type="text" class="form-control form-control-sm" id="commentInput-${inquiry._id}" placeholder="관리자 답글..." required>
                             <button class="btn btn-outline-secondary btn-sm" type="button" onclick="submitComment('${inquiry._id}')">등록</button>
                             <% } %>
@@ -512,8 +522,10 @@
                 li.innerHTML = `
                     <div class="comment-item-meta">
                         <strong>${escapeHTML(comment.author || '익명')}</strong> | ${new Date(comment.createdAt).toLocaleString()}
+                        <% if (session && session.user && session.user.role === 'admin') { %>
                         <button class="btn btn-danger btn-sm float-end ms-2" onclick="deleteComment('${inquiryId}', '${comment._id}', ${currentPage})">삭제</button>
                         <button class="btn btn-warning btn-sm float-end" onclick="editComment('${inquiryId}', '${comment._id}')">수정</button>
+                        <% } %>
                     </div>
                     <p class="comment-content" id="commentContentDisplay-${comment._id}">${escapeHTML(comment.content)}</p>
                     

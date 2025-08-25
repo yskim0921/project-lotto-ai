@@ -10,6 +10,13 @@
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
     <link rel="stylesheet" href="/css/style.css">
     <style>
+        body {
+            padding-top: 80px; /* 헤더 높이만큼 상단 여백 추가 */
+        }
+        .main-container {
+            margin-top: 2rem;
+            margin-bottom: 3rem;
+        }
         .usage-cards-container {
             display: flex;
             flex-wrap: wrap;
@@ -124,7 +131,7 @@
     <!-- 상단 include (고객센터 메뉴 추가될 예정) -->
     <%- include('../ins/top') %>
 
-    <div class="container w-75 mt-5 mx-auto">
+    <div class="container w-75 mx-auto main-container">
         <header class="text-center mb-5">
             <h1 class="display-4">저희 홈페이지에 오신것을 환영합니다~!</h1>
             <p class="lead">무료로 로또번호 받아가세요~ 궁금한 챕터를 클릭하여 상세 이용 방법을 확인해보세요.</p>
@@ -286,7 +293,7 @@
     </div>
 
     <!-- bottom include -->
-    <%- include('../ins/bottom') %>
+    <%- include('../ins/footer') %>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {

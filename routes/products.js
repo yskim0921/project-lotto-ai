@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
 const { ObjectId } = require('mongodb');
+const { checkAdmin } = require('../middleware/auth');
 
 // ===== Multer 설정 =====
 const uploadDir = path.join(__dirname, '..', 'public', 'upload', 'product');
@@ -17,10 +18,7 @@ const storage = multer.diskStorage({
         cb(null, `${base}_${Date.now()}${ext}`);
     },
 });
-const upload = multer({
-    storage,
-    limits: { fileSize: 5 * 1024 * 1024 },
-});
+const upload = multer({ storage });
 
 // ===== Routes =====
 
@@ -94,134 +92,22 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// 후기 삭제 (DELETE 요청 처리)
-router.delete('/:id', async (req, res) => {
+// 후기 삭제 (DELETE 요청 처리) - 관리자 권한 필요
+router.delete('/:id', checkAdmin, async (req, res) => {
     try {
-        const { id } = req.params;
-        
-        if (!ObjectId.isValid(id)) {
-            return res.status(400).json({ message: '유효하지 않은 후기 ID입니다.' });
-        }
-
-        const result = await req.db.collection('comment').deleteOne({ _id: new ObjectId(id) });
-
-        if (result.deletedCount === 0) {
-            return res.status(404).json({ message: '후기를 찾을 수 없거나 이미 삭제되었습니다.' });
-        }
-
-        res.status(200).json({ message: '후기가 성공적으로 삭제되었습니다.' });
-    } catch (error) {
-        console.error('후기 삭제 중 오류 발생:', error);
-        res.status(500).json({ message: '서버 오류로 후기 삭제에 실패했습니다.', error: error.message });
-    }
-});
-
-// 📌 새로운 라우터: 특정 후기의 댓글 가져오기 (GET)
-router.get('/:reviewId/comments', async (req, res) => {
-    try {
-        const { reviewId } = req.params;
-        if (!ObjectId.isValid(reviewId)) {
-            return res.status(400).json({ message: '유효하지 않은 후기 ID입니다.' });
-        }
-        // 'comments' 컬렉션에서 해당 reviewId를 가진 댓글들을 최신순으로 가져옵니다.
-        const comments = await req.db.collection('comments')
-                               .find({ reviewId: new ObjectId(reviewId) })
-                               .sort({ createdAt: -1 }) // 최신 댓글이 위에 오도록 정렬
-                               .toArray();
-        res.status(200).json(comments);
-    } catch (error) {
-        console.error('댓글 조회 중 오류 발생:', error);
-        res.status(500).json({ message: '댓글 조회에 실패했습니다.', error: error.message });
-    }
-});
-
-// 📌 새로운 라우터: 특정 후기에 댓글 추가 (POST)
-router.post('/:reviewId/comments', async (req, res) => {
-    try {
-        const { reviewId } = req.params;
-        const { author, content } = req.body; // 클라이언트에서 전송된 작성자, 내용
-
-        if (!ObjectId.isValid(reviewId)) {
-            return res.status(400).json({ message: '유효하지 않은 후기 ID입니다.' });
-        }
-        if (!author || !content) {
-            return res.status(400).json({ message: '작성자 또는 댓글 내용이 비어있습니다.' });
-        }
-
-        const newComment = {
-            reviewId: new ObjectId(reviewId), // 어떤 후기에 대한 댓글인지 참조
-            author: author,
-            content: content,
-            createdAt: new Date() // 댓글 작성 시간
-        };
-
-        const result = await req.db.collection('comments').insertOne(newComment);
-        res.status(201).json({ message: '댓글이 성공적으로 등록되었습니다.', commentId: result.insertedId });
-    } catch (error) {
-        console.error('댓글 등록 중 오류 발생:', error);
-        res.status(500).json({ message: '댓글 등록에 실패했습니다.', error: error.message });
-    }
-});
-
-// 📌 새로운 라우터: 특정 댓글 삭제 (DELETE)
-router.delete('/:reviewId/comments/:commentId', async (req, res) => {
-    try {
-        const { reviewId, commentId } = req.params; // 후기 ID와 댓글 ID를 모두 받음
-
-        if (!ObjectId.isValid(reviewId) || !ObjectId.isValid(commentId)) {
-            return res.status(400).json({ message: '유효하지 않은 ID입니다.' });
-        }
-
-        // 해당 reviewId에 속하는 commentId를 가진 댓글 삭제
-        const result = await req.db.collection('comments').deleteOne({ 
-            _id: new ObjectId(commentId),
-            reviewId: new ObjectId(reviewId) // 해당 후기의 댓글인지 확인하는 조건 추가
+        const result = await req.db.collection('comment').deleteOne({
+            _id: new ObjectId(req.params.id)
         });
-
+        
         if (result.deletedCount === 0) {
-            return res.status(404).json({ message: '댓글을 찾을 수 없거나 이미 삭제되었습니다.' });
-        }
-
-        res.status(200).json({ message: '댓글이 성공적으로 삭제되었습니다.' });
-    } catch (error) {
-        console.error('댓글 삭제 중 오류 발생:', error);
-        res.status(500).json({ message: '댓글 삭제에 실패했습니다.', error: error.message });
-    }
-});
-
-router.put('/:reviewId/comments/:commentId', async (req, res) => {
-    try {
-        const { reviewId, commentId } = req.params;
-        const { content } = req.body; // 수정할 댓글 내용
-
-        // ID 유효성 검사
-        if (!ObjectId.isValid(reviewId) || !ObjectId.isValid(commentId)) {
-            return res.status(400).json({ message: '유효하지 않은 ID입니다.' });
-        }
-        // 내용 유효성 검사
-        if (!content || content.trim() === '') {
-            return res.status(400).json({ message: '댓글 내용을 입력해주세요.' });
-        }
-
-        // MongoDB의 'comments' 컬렉션에서 해당 댓글 업데이트
-        const result = await req.db.collection('comments').updateOne(
-            { 
-                _id: new ObjectId(commentId),
-                reviewId: new ObjectId(reviewId) // 해당 후기의 댓글인지 확인하는 조건
-            },
-            { $set: { content: content.trim(), updatedAt: new Date() } } // 내용 및 수정 시간 업데이트
-        );
-
-        // 업데이트된 문서가 없는 경우 (댓글을 찾지 못했거나 이미 삭제된 경우)
-        if (result.matchedCount === 0) {
-            return res.status(404).json({ message: '댓글을 찾을 수 없거나 권한이 없습니다.' });
+            return res.status(404).json({ error: '후기를 찾을 수 없습니다.' });
         }
         
-        // 성공 응답
-        res.status(200).json({ message: '댓글이 성공적으로 수정되었습니다.' });
-    } catch (error) {
-        console.error('댓글 수정 실패:', error);
-        res.status(500).json({ message: '댓글 수정에 실패했습니다.', error: error.message });
+        res.json({ message: '후기가 삭제되었습니다.' });
+    } catch (err) {
+        console.error('후기 삭제 중 오류:', err);
+        res.status(500).json({ error: '후기 삭제 중 오류가 발생했습니다.' });
     }
 });
+
 module.exports = router;
