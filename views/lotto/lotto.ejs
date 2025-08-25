@@ -431,6 +431,14 @@
         <h2>🍀 AI 로또번호 분석</h2>
         
         <div class="input-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0; color: #667eea;">🔮 로또 번호 분석</h3>
+                <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
+                    <a href="/lotto/history-page" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; padding: 10px 20px; border-radius: 15px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">
+                        📊 분석 히스토리
+                    </a>
+                <% } %>
+            </div>
             <div class="input-row">
                 <input type="text" id="name" placeholder="이름">
                 <input type="text" id="gender" placeholder="성별 (남성/여성)">
