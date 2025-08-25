@@ -4,7 +4,7 @@ const router = express.Router();
 
 // GET / → 메인 페이지
 router.get('/', (req, res) => {
-  res.render('index'); 
+  res.render('index', { user: req.session.user }); 
 });
 
 module.exports = router;
