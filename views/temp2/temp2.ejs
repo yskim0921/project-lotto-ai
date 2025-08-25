@@ -84,7 +84,7 @@
         <div style="text-align: center; margin-bottom: 30px;">
             <h2 style="margin-bottom: 20px;">최근 10주 로또 번호</h2>
             <form method="get" action="/temp2" style="display: inline-flex; gap: 10px; align-items: center;">
-                <input type="number" name="drwNo" placeholder="회차 입력 (선택)" value="<%= inputDrwNo %>" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 5px;">
+                <input type="number" name="drwNo" min = "1" placeholder="회차 입력 (선택)" value="<%= inputDrwNo %>" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 5px;">
                 <button type="submit" style="padding: 8px 16px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">조회</button>
             </form>
         </div>
@@ -124,7 +124,7 @@
         <div class="form-container">
             <h3 style="text-align: center; margin-bottom: 20px;">내 번호 입력</h3>
             <form action="temp2/result" method="POST" style="text-align: center;">
-                <input type="number" name="drwNo" placeholder="회차 입력" style="width:100px;">
+                <input type="number" name="drwNo"min="1" placeholder="회차 입력" style="width:100px;">
                 <input type="number" name="num1" min="1" max="45" style="width:60px;" required>
                 <input type="number" name="num2" min="1" max="45" style="width:60px;" required>
                 <input type="number" name="num3" min="1" max="45" style="width:60px;" required>
