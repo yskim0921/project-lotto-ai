@@ -55,6 +55,7 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.2);
             position: relative;
+            cursor: pointer;
         }
 
         .history-card:hover {
@@ -69,6 +70,12 @@
             margin-bottom: 15px;
             padding-bottom: 10px;
             border-bottom: 1px solid #f0f0f0;
+        }
+
+        .history-header.compact {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
         }
 
         .user-info {
@@ -196,6 +203,31 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            z-index: 10;
+        }
+
+        .toggle-btn {
+            position: absolute;
+            top: 10px;
+            right: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .toggle-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
         .delete-btn:hover {
@@ -322,6 +354,16 @@
             margin-top: 5px;
         }
 
+        .details-section {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .details-section.expanded {
+            max-height: 2000px;
+        }
+
         @keyframes fadeOut {
             from {
                 opacity: 1;
@@ -429,10 +471,11 @@
                 }
 
                 return `
-                    <div class="history-card" data-id="${item._id}">
-                        <button class="delete-btn" onclick="deleteHistory('${item._id}')" title="삭제">🗑️</button>
+                    <div class="history-card" data-id="${item._id}" onclick="toggleDetails('${item._id}')">
+                        <button class="delete-btn" onclick="event.stopPropagation(); deleteHistory('${item._id}')" title="삭제">🗑️</button>
+                        <button class="toggle-btn" onclick="event.stopPropagation(); toggleDetails('${item._id}')" title="자세히 보기">📋</button>
                         
-                        <div class="history-header">
+                        <div class="history-header compact">
                             <div class="user-info">
                                 <span>👤 ${item.name}</span>
                                 <span>${item.gender}</span>
@@ -442,96 +485,97 @@
                             <div class="timestamp">${formatDate(item.createdAt)}</div>
                         </div>
                         
-                        <div class="dream-text">
-                            <strong>🌙 꿈:</strong> ${item.dream}
-                        </div>
-                        
-                        ${result && result.dream_analysis ? `
-                            <div class="analysis-section">
-                                <h5>🌙 꿈 해석:</h5>
-                                <p>${result.dream_analysis.substring(0, 150)}${result.dream_analysis.length > 150 ? '...' : ''}</p>
+                        <div class="details-section" id="details-${item._id}">
+                            <div class="dream-text">
+                                <strong>🌙 꿈:</strong> ${item.dream}
                             </div>
-                        ` : ''}
-                        
-                        ${result && result.today_analysis ? `
-                            <div class="fortune-section">
-                                <h5>🍀 오늘의 운세 (${result.today_analysis.today || 'N/A'}):</h5>
-                                <p><strong>총운:</strong> ${result.today_analysis.generalLuck || 'N/A'}</p>
-                                <p>${result.today_analysis.lucky ? result.today_analysis.lucky.substring(0, 100) + (result.today_analysis.lucky.length > 100 ? '...' : '') : 'N/A'}</p>
-                            </div>
-                        ` : ''}
-                        
-                        ${result && result.emotion_list ? `
-                            <div class="analysis-section">
-                                <h5>🌅 감정 분석:</h5>
-                                ${result.emotion_list.today_emotion ? `
-                                    <div style="margin-bottom: 8px;">
-                                        <strong>오늘의 감정:</strong>
-                                        <table class="emotion-table">
-                                            <tr><th>감정</th><th>확률</th></tr>
-                                            ${result.emotion_list.today_emotion.slice(0, 3).map(emotion => 
-                                                `<tr><td>${emotion.label}</td><td>${(emotion.probability * 100).toFixed(1)}%</td></tr>`
-                                            ).join('')}
-                                        </table>
-                                    </div>
-                                ` : ''}
-                                ${result.emotion_list.dream_emotion ? `
-                                    <div>
-                                        <strong>꿈에서의 감정:</strong>
-                                        <table class="emotion-table">
-                                            <tr><th>감정</th><th>확률</th></tr>
-                                            ${result.emotion_list.dream_emotion.slice(0, 3).map(emotion => 
-                                                `<tr><td>${emotion.label}</td><td>${(emotion.probability * 100).toFixed(1)}%</td></tr>`
-                                            ).join('')}
-                                        </table>
-                                    </div>
-                                ` : ''}
-                            </div>
-                        ` : ''}
-                        
-                        ${result && result.number_info && result.number_info.today_number_meanings ? `
-                            <div class="meaning-section">
-                                <h5>🔢 숫자별 의미 (오늘 운세):</h5>
-                                ${Object.keys(result.number_info.today_number_meanings).slice(0, 2).map(emotion => {
-                                    const meanings = result.number_info.today_number_meanings[emotion];
-                                    if (Array.isArray(meanings) && meanings.length > 0) {
-                                        return `
-                                            <div class="meaning-item">
-                                                <strong>${emotion}:</strong> ${meanings.slice(0, 3).map(item => 
-                                                    `<span class="lotto-ball ${getLottoBallClass(item.숫자)}">${item.숫자}</span> ${item.상징}`
-                                                ).join(', ')}
-                                            </div>
-                                        `;
-                                    }
-                                    return '';
-                                }).join('')}
-                            </div>
-                        ` : ''}
-                        
-                        ${result && result.number_info && result.number_info.lotto_result ? `
-                            <div class="lotto-rounds">
-                                ${Object.keys(result.number_info.lotto_result).slice(0, 3).map(resultKey => {
-                                    const resultData = result.number_info.lotto_result[resultKey];
-                                    const countNum = resultKey.replace('count_', '');
-                                    const finalNumbers = resultData.final_results && Array.isArray(resultData.final_results) ? 
-                                        resultData.final_results.sort((a, b) => a - b).map(n => `<span class="lotto-ball ${getLottoBallClass(n)}">${n}</span>`).join(' ') : '데이터 없음';
-                                    
-                                    return `
-                                        <div class="lotto-round">
-                                            <h6>🎲 ${countNum}회차</h6>
-                                            <div class="final">
-                                                <strong>최종 번호:</strong><br>
-                                                ${finalNumbers}
-                                            </div>
+                            
+                            ${result && result.dream_analysis ? `
+                                <div class="analysis-section">
+                                    <h5>🌙 꿈 해석:</h5>
+                                    <p>${result.dream_analysis.substring(0, 150)}${result.dream_analysis.length > 150 ? '...' : ''}</p>
+                                </div>
+                            ` : ''}
+                            
+                            ${result && result.today_analysis ? `
+                                <div class="fortune-section">
+                                    <h5>🍀 오늘의 운세 (${result.today_analysis.today || 'N/A'}):</h5>
+                                    <p><strong>총운:</strong> ${result.today_analysis.generalLuck || 'N/A'}</p>
+                                    <p>${result.today_analysis.lucky ? result.today_analysis.lucky.substring(0, 100) + (result.today_analysis.lucky.length > 100 ? '...' : '') : 'N/A'}</p>
+                                </div>
+                            ` : ''}
+                            
+                            ${result && result.emotion_list ? `
+                                <div class="analysis-section">
+                                    <h5>🌅 감정 분석:</h5>
+                                    ${result.emotion_list.today_emotion ? `
+                                        <div style="margin-bottom: 8px;">
+                                            <strong>오늘의 감정:</strong>
+                                            <table class="emotion-table">
+                                                <tr><th>감정</th><th>확률</th></tr>
+                                                ${result.emotion_list.today_emotion.slice(0, 3).map(emotion => 
+                                                    `<tr><td>${emotion.label}</td><td>${(emotion.probability * 100).toFixed(1)}%</td></tr>`
+                                                ).join('')}
+                                            </table>
                                         </div>
-                                    `;
-                                }).join('')}
+                                    ` : ''}
+                                    ${result.emotion_list.dream_emotion ? `
+                                        <div>
+                                            <strong>꿈에서의 감정:</strong>
+                                            <table class="emotion-table">
+                                                <tr><th>감정</th><th>확률</th></tr>
+                                                ${result.emotion_list.dream_emotion.slice(0, 3).map(emotion => 
+                                                    `<tr><td>${emotion.label}</td><td>${(emotion.probability * 100).toFixed(1)}%</td></tr>`
+                                                ).join('')}
+                                            </table>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            ` : ''}
+                            
+                            ${result && result.number_info && result.number_info.today_number_meanings ? `
+                                <div class="meaning-section">
+                                    <h5>🔢 숫자별 의미 (오늘 운세):</h5>
+                                    ${Object.keys(result.number_info.today_number_meanings).slice(0, 2).map(emotion => {
+                                        const meanings = result.number_info.today_number_meanings[emotion];
+                                        if (Array.isArray(meanings) && meanings.length > 0) {
+                                            return `
+                                                <div class="meaning-item">
+                                                    <strong>${emotion}:</strong> ${meanings.slice(0, 3).map(item => 
+                                                        `<span class="lotto-ball ${getLottoBallClass(item.숫자)}">${item.숫자}</span> ${item.상징}`
+                                                    ).join(', ')}
+                                                </div>
+                                            `;
+                                        }
+                                        return '';
+                                    }).join('')}
+                                </div>
+                            ` : ''}
+                            
+                                                         ${result && result.number_info && result.number_info.lotto_result ? `
+                                 <div class="lotto-rounds">
+                                     ${Object.keys(result.number_info.lotto_result).slice(0, 3).map(resultKey => {
+                                         const resultData = result.number_info.lotto_result[resultKey];
+                                         const countNum = resultKey.replace('count_', '');
+                                         const finalNumbers = resultData.final_results && Array.isArray(resultData.final_results) ? 
+                                             resultData.final_results.sort((a, b) => a - b).map(n => `<span class="lotto-ball ${getLottoBallClass(n)}">${n}</span>`).join(' ') : '데이터 없음';
+                                         
+                                         return `
+                                             <div class="lotto-round">
+                                                 <h6>🎲 ${countNum}회차</h6>
+                                                 <div class="final">
+                                                     ${finalNumbers}
+                                                 </div>
+                                             </div>
+                                         `;
+                                     }).join('')}
+                                 </div>
+                             ` : ''}
+                            
+                            <div class="final-numbers">
+                                <h4>🎯 최종 추천 번호:</h4>
+                                <div>${finalNumbers}</div>
                             </div>
-                        ` : ''}
-                        
-                        <div class="final-numbers">
-                            <h4>🎯 최종 추천 번호:</h4>
-                            <div>${finalNumbers}</div>
                         </div>
                     </div>
                 `;
@@ -560,6 +604,22 @@
                         </button>
                     </div>
                 `;
+            }
+        }
+
+        // 토글 기능
+        function toggleDetails(id) {
+            const detailsSection = document.getElementById(`details-${id}`);
+            const toggleBtn = document.querySelector(`[data-id="${id}"] .toggle-btn`);
+            
+            if (detailsSection.classList.contains('expanded')) {
+                detailsSection.classList.remove('expanded');
+                toggleBtn.innerHTML = '📋';
+                toggleBtn.title = '자세히 보기';
+            } else {
+                detailsSection.classList.add('expanded');
+                toggleBtn.innerHTML = '📄';
+                toggleBtn.title = '접기';
             }
         }
 
