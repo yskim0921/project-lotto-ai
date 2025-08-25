@@ -86,13 +86,23 @@
                 </a>
             </div>
             <div class="w3-quarter">
-                <a href="/admin/login" style="text-decoration: none;">
-                    <div class="w3-card w3-container w3-hover-shadow" style="min-height:150px; cursor: pointer; transition: all 0.3s ease;">
-                        <h3>관리자</h3>
-                        <i class="fa fa-user-secret w3-margin-bottom w3-text-theme" style="font-size:64px"></i>
-                        <p>시스템 관리자 로그인</p>
-                    </div>
-                </a>
+                <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
+                    <a href="/lotto/history-page" style="text-decoration: none;">
+                        <div class="w3-card w3-container w3-hover-shadow" style="min-height:150px; cursor: pointer; transition: all 0.3s ease;">
+                            <h3>분석 히스토리</h3>
+                            <i class="fa fa-history w3-margin-bottom w3-text-theme" style="font-size:64px"></i>
+                            <p>로또 분석 결과 히스토리</p>
+                        </div>
+                    </a>
+                <% } else { %>
+                    <a href="/admin/login" style="text-decoration: none;">
+                        <div class="w3-card w3-container w3-hover-shadow" style="min-height:150px; cursor: pointer; transition: all 0.3s ease;">
+                            <h3>관리자</h3>
+                            <i class="fa fa-user-secret w3-margin-bottom w3-text-theme" style="font-size:64px"></i>
+                            <p>시스템 관리자 로그인</p>
+                        </div>
+                    </a>
+                <% } %>
             </div>
         </div>
     </div>
