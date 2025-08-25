@@ -47,13 +47,14 @@
 
         .history-card {
             background: rgba(255,255,255,0.95);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
         }
 
         .history-card:hover {
@@ -65,23 +66,23 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f0f0f0;
         }
 
         .user-info {
             display: flex;
-            gap: 20px;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
         .user-info span {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 14px;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
             font-weight: 500;
         }
 
@@ -92,14 +93,14 @@
 
         .lotto-ball {
             display: inline-block;
-            width: 35px;
-            height: 35px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
-            margin: 3px;
+            margin: 2px;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 12px;
             text-align: center;
-            line-height: 35px;
+            line-height: 28px;
             color: white;
             box-shadow: 
                 inset 2px 2px 4px rgba(255,255,255,0.3),
@@ -116,26 +117,28 @@
 
         .final-numbers {
             background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 165, 0, 0.3)) !important;
-            border: 3px solid #ffd700;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-            padding: 15px;
-            border-radius: 15px;
-            margin: 15px 0;
+            border: 2px solid #ffd700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
         }
 
         .final-numbers h4 {
             color: #ffd700;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            margin-bottom: 8px;
+            font-size: 14px;
         }
 
         .dream-text {
             background: linear-gradient(135deg, #ffeaa7, #fab1a0);
-            padding: 15px;
-            border-radius: 10px;
+            padding: 10px;
+            border-radius: 8px;
             font-style: italic;
-            margin: 10px 0;
-            border-left: 4px solid #fdcb6e;
+            margin: 8px 0;
+            border-left: 3px solid #fdcb6e;
+            font-size: 13px;
         }
 
         .loading {
@@ -175,6 +178,159 @@
         .back-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .delete-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .analysis-section {
+            margin: 8px 0;
+            padding: 8px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+        }
+
+        .analysis-section h5 {
+            margin: 0 0 5px 0;
+            color: #667eea;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .analysis-section p {
+            margin: 0;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #555;
+        }
+
+        .fortune-section {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 8px;
+            border-radius: 8px;
+            margin: 8px 0;
+        }
+
+        .fortune-section h5 {
+            margin: 0 0 5px 0;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .fortune-section p {
+            margin: 0;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .emotion-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 5px 0;
+            font-size: 11px;
+        }
+
+        .emotion-table th,
+        .emotion-table td {
+            padding: 4px 8px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .emotion-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-weight: 600;
+        }
+
+        .meaning-section {
+            background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+            padding: 8px;
+            border-radius: 8px;
+            margin: 8px 0;
+        }
+
+        .meaning-section h5 {
+            margin: 0 0 5px 0;
+            color: #d63031;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .meaning-item {
+            background: rgba(255,255,255,0.8);
+            padding: 5px;
+            border-radius: 5px;
+            margin: 3px 0;
+            font-size: 11px;
+            border-left: 2px solid #667eea;
+        }
+
+        .lotto-rounds {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 8px 0;
+        }
+
+        .lotto-round {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .lotto-round h6 {
+            margin: 0 0 5px 0;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .lotto-round .numbers {
+            font-size: 11px;
+            margin: 3px 0;
+        }
+
+        .lotto-round .final {
+            background: rgba(255, 215, 0, 0.3);
+            border: 1px solid #ffd700;
+            border-radius: 5px;
+            padding: 5px;
+            margin-top: 5px;
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
         }
 
         @media (max-width: 768px) {
@@ -273,7 +429,9 @@
                 }
 
                 return `
-                    <div class="history-card">
+                    <div class="history-card" data-id="${item._id}">
+                        <button class="delete-btn" onclick="deleteHistory('${item._id}')" title="삭제">🗑️</button>
+                        
                         <div class="history-header">
                             <div class="user-info">
                                 <span>👤 ${item.name}</span>
@@ -287,6 +445,89 @@
                         <div class="dream-text">
                             <strong>🌙 꿈:</strong> ${item.dream}
                         </div>
+                        
+                        ${result && result.dream_analysis ? `
+                            <div class="analysis-section">
+                                <h5>🌙 꿈 해석:</h5>
+                                <p>${result.dream_analysis.substring(0, 150)}${result.dream_analysis.length > 150 ? '...' : ''}</p>
+                            </div>
+                        ` : ''}
+                        
+                        ${result && result.today_analysis ? `
+                            <div class="fortune-section">
+                                <h5>🍀 오늘의 운세 (${result.today_analysis.today || 'N/A'}):</h5>
+                                <p><strong>총운:</strong> ${result.today_analysis.generalLuck || 'N/A'}</p>
+                                <p>${result.today_analysis.lucky ? result.today_analysis.lucky.substring(0, 100) + (result.today_analysis.lucky.length > 100 ? '...' : '') : 'N/A'}</p>
+                            </div>
+                        ` : ''}
+                        
+                        ${result && result.emotion_list ? `
+                            <div class="analysis-section">
+                                <h5>🌅 감정 분석:</h5>
+                                ${result.emotion_list.today_emotion ? `
+                                    <div style="margin-bottom: 8px;">
+                                        <strong>오늘의 감정:</strong>
+                                        <table class="emotion-table">
+                                            <tr><th>감정</th><th>확률</th></tr>
+                                            ${result.emotion_list.today_emotion.slice(0, 3).map(emotion => 
+                                                `<tr><td>${emotion.label}</td><td>${(emotion.probability * 100).toFixed(1)}%</td></tr>`
+                                            ).join('')}
+                                        </table>
+                                    </div>
+                                ` : ''}
+                                ${result.emotion_list.dream_emotion ? `
+                                    <div>
+                                        <strong>꿈에서의 감정:</strong>
+                                        <table class="emotion-table">
+                                            <tr><th>감정</th><th>확률</th></tr>
+                                            ${result.emotion_list.dream_emotion.slice(0, 3).map(emotion => 
+                                                `<tr><td>${emotion.label}</td><td>${(emotion.probability * 100).toFixed(1)}%</td></tr>`
+                                            ).join('')}
+                                        </table>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+                        
+                        ${result && result.number_info && result.number_info.today_number_meanings ? `
+                            <div class="meaning-section">
+                                <h5>🔢 숫자별 의미 (오늘 운세):</h5>
+                                ${Object.keys(result.number_info.today_number_meanings).slice(0, 2).map(emotion => {
+                                    const meanings = result.number_info.today_number_meanings[emotion];
+                                    if (Array.isArray(meanings) && meanings.length > 0) {
+                                        return `
+                                            <div class="meaning-item">
+                                                <strong>${emotion}:</strong> ${meanings.slice(0, 3).map(item => 
+                                                    `<span class="lotto-ball ${getLottoBallClass(item.숫자)}">${item.숫자}</span> ${item.상징}`
+                                                ).join(', ')}
+                                            </div>
+                                        `;
+                                    }
+                                    return '';
+                                }).join('')}
+                            </div>
+                        ` : ''}
+                        
+                        ${result && result.number_info && result.number_info.lotto_result ? `
+                            <div class="lotto-rounds">
+                                ${Object.keys(result.number_info.lotto_result).slice(0, 3).map(resultKey => {
+                                    const resultData = result.number_info.lotto_result[resultKey];
+                                    const countNum = resultKey.replace('count_', '');
+                                    const finalNumbers = resultData.final_results && Array.isArray(resultData.final_results) ? 
+                                        resultData.final_results.sort((a, b) => a - b).map(n => `<span class="lotto-ball ${getLottoBallClass(n)}">${n}</span>`).join(' ') : '데이터 없음';
+                                    
+                                    return `
+                                        <div class="lotto-round">
+                                            <h6>🎲 ${countNum}회차</h6>
+                                            <div class="final">
+                                                <strong>최종 번호:</strong><br>
+                                                ${finalNumbers}
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        ` : ''}
                         
                         <div class="final-numbers">
                             <h4>🎯 최종 추천 번호:</h4>
@@ -319,6 +560,35 @@
                         </button>
                     </div>
                 `;
+            }
+        }
+
+        // 삭제 기능
+        async function deleteHistory(id) {
+            if (!confirm('정말로 이 분석 결과를 삭제하시겠습니까?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/lotto/history/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    // 삭제된 카드 제거
+                    const card = document.querySelector(`[data-id="${id}"]`);
+                    if (card) {
+                        card.style.animation = 'fadeOut 0.3s ease';
+                        setTimeout(() => {
+                            card.remove();
+                        }, 300);
+                    }
+                } else {
+                    throw new Error('삭제 실패');
+                }
+            } catch (error) {
+                console.error('삭제 오류:', error);
+                alert('삭제 중 오류가 발생했습니다.');
             }
         }
 
